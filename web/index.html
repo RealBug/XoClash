@@ -1,0 +1,113 @@
+<!DOCTYPE html><html><head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="XO Clash - Jeu collaboratif">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="XO Clash">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>XO Clash</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script>
+    var FLUTTER_BASE_HREF = "/";
+  </script>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  <style id="splash-screen-style">
+    html {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background-color: #0F0A1F;
+          background-size: 100% 100%;
+    }
+
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .contain {
+      display:block;
+      width:100%; height:100%;
+      object-fit: contain;
+    }
+
+    .stretch {
+      display:block;
+      width:100%; height:100%;
+    }
+
+    .cover {
+      display:block;
+      width:100%; height:100%;
+      object-fit: cover;
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      -ms-transform: translate(-50%, 0);
+      transform: translate(-50%, 0);
+    }
+
+    .bottomLeft {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .bottomRight {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+  <script id="splash-screen-script">
+    function removeSplashFromWeb() {
+      document.getElementById("splash")?.remove();
+      document.getElementById("splash-branding")?.remove();
+      document.body.style.background = "transparent";
+    }
+  </script>
+</head>
+<body>
+  
+  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    window.__audioCtx = null;
+    window.__initAudio = function() {
+      if (!window.__audioCtx) {
+        window.__audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        window.__audioCtx.resume();
+      }
+    };
+    window.__playTone = function(frequency, durationMs) {
+      if (!window.__audioCtx) window.__initAudio();
+      const ctx = window.__audioCtx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = frequency;
+      osc.type = 'sine';
+      const now = ctx.currentTime;
+      const duration = durationMs / 1000.0;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.3, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+      osc.start(now);
+      osc.stop(now + duration);
+    };
+  </script>
+
+
+</body></html>

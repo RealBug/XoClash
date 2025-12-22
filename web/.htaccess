@@ -1,0 +1,17 @@
+# Apache configuration for Flutter Web with path-based URLs (no hash)
+# This file ensures that all routes are redirected to index.html
+# Required for proper routing without # in URLs
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Don't rewrite files or directories
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Rewrite everything else to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+
