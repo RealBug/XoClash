@@ -21,13 +21,19 @@ import 'package:tictac/features/game/presentation/widgets/game_info.dart';
 import 'package:tictac/features/game/presentation/widgets/game_result_helper.dart';
 import 'package:tictac/features/game/presentation/widgets/game_result_snackbar.dart';
 import 'package:tictac/features/settings/presentation/providers/settings_providers.dart'
-    show isDarkModeProvider, animationsEnabledProvider, xShapeProvider, oShapeProvider, xEmojiProvider, oEmojiProvider, useEmojisProvider;
+    show
+        isDarkModeProvider,
+        animationsEnabledProvider,
+        xShapeProvider,
+        oShapeProvider,
+        xEmojiProvider,
+        oEmojiProvider,
+        useEmojisProvider;
 import 'package:tictac/features/user/domain/entities/user.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
 
 @RoutePage()
 class GameScreen extends ConsumerStatefulWidget {
-
   const GameScreen({super.key, this.friendAvatar});
   final String? friendAvatar;
 
@@ -72,7 +78,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameState = ref.watch(gameStateProvider);
     final isDarkMode = ref.watch(isDarkModeProvider);
     final animationsEnabled = ref.watch(animationsEnabledProvider);
-    final user = ref.watch(userProvider.select((asyncValue) => asyncValue.value));
+    final user = ref.watch(
+      userProvider.select((asyncValue) => asyncValue.value),
+    );
 
     final gameResultInfoUseCase = ref.read(getGameResultInfoUseCaseProvider);
 
@@ -108,8 +116,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         backgroundColor: AppTheme.transparent,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppTheme.transparent,
-          statusBarIconBrightness:
-              isDarkMode ? Brightness.light : Brightness.dark,
+          statusBarIconBrightness: isDarkMode
+              ? Brightness.light
+              : Brightness.dark,
           statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
         ),
         actions: <Widget>[
@@ -130,13 +139,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             onPressed: () {
               ref.read(gameStateProvider.notifier).resetGame();
             },
-            icon: Icon(Icons.refresh,
-                color: AppTheme.getPrimaryColor(isDarkMode)),
+            icon: Icon(
+              Icons.refresh,
+              color: AppTheme.getPrimaryColor(isDarkMode),
+            ),
             label: Text(
               context.l10n.reset,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.getPrimaryColor(isDarkMode),
-                  ),
+                color: AppTheme.getPrimaryColor(isDarkMode),
+              ),
             ),
           ),
           Gap(AppSpacing.xs),
@@ -153,70 +164,76 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     child: ScrollableSection(
                       controller: _scrollController,
                       child: LayoutBuilder(
-                          builder: (BuildContext context, BoxConstraints constraints) {
-                            return SizedBox(
-                              width: constraints.maxWidth,
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: UIConstants.widgetSizeMaxWidth,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(24),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Gap(AppSpacing.lg),
-                                        GameInfo(
-                                          gameState: gameState,
-                                          friendAvatar: widget.friendAvatar,
-                                          animationsEnabled: animationsEnabled,
-                                        ),
-                                        Gap(AppSpacing.xxxl),
-                                        GameBoard(
-                                          gameState: gameState,
-                                          isDarkMode: isDarkMode,
-                                          animationsEnabled: animationsEnabled,
-                                          xShape: gameBoardSettings.xShape,
-                                          oShape: gameBoardSettings.oShape,
-                                          xEmoji: gameBoardSettings.xEmoji,
-                                          oEmoji: gameBoardSettings.oEmoji,
-                                          useEmojis:
-                                              gameBoardSettings.useEmojis,
-                                          onCellTap: (int row, int col) async {
-                                            await ref
-                                                .read(
-                                                    gameStateProvider.notifier)
-                                                .makeMove(row, col);
-                                          },
-                                          onWinningLineAnimationComplete: () {
-                                            if (mounted &&
-                                                shouldShowConfetti &&
-                                                animationsEnabled) {
-                                              setState(() {
-                                                _shouldShowConfetti = true;
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        Gap(AppSpacing.xxxl),
-                                        if (gameState.gameId != null &&
-                                            gameState.isOnline)
-                                          GameIdCard(gameState: gameState),
-                                      ],
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                              return SizedBox(
+                                width: constraints.maxWidth,
+                                child: Center(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: UIConstants.widgetSizeMaxWidth,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(24),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Gap(AppSpacing.lg),
+                                          GameInfo(
+                                            gameState: gameState,
+                                            friendAvatar: widget.friendAvatar,
+                                            animationsEnabled:
+                                                animationsEnabled,
+                                          ),
+                                          Gap(AppSpacing.xxxl),
+                                          GameBoard(
+                                            gameState: gameState,
+                                            isDarkMode: isDarkMode,
+                                            animationsEnabled:
+                                                animationsEnabled,
+                                            xShape: gameBoardSettings.xShape,
+                                            oShape: gameBoardSettings.oShape,
+                                            xEmoji: gameBoardSettings.xEmoji,
+                                            oEmoji: gameBoardSettings.oEmoji,
+                                            useEmojis:
+                                                gameBoardSettings.useEmojis,
+                                            onCellTap:
+                                                (int row, int col) async {
+                                                  await ref
+                                                      .read(
+                                                        gameStateProvider
+                                                            .notifier,
+                                                      )
+                                                      .makeMove(row, col);
+                                                },
+                                            onWinningLineAnimationComplete: () {
+                                              if (mounted &&
+                                                  shouldShowConfetti &&
+                                                  animationsEnabled) {
+                                                setState(() {
+                                                  _shouldShowConfetti = true;
+                                                });
+                                              }
+                                            },
+                                          ),
+                                          Gap(AppSpacing.xxxl),
+                                          if (gameState.gameId != null &&
+                                              gameState.isOnline)
+                                            GameIdCard(gameState: gameState),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
           if (animationsEnabled && shouldShowConfetti)
             ConfettiWidget(
               isActive: _shouldShowConfetti,

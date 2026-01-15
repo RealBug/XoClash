@@ -15,6 +15,7 @@ void main() {
       expect(gameState.gameId, isNull);
       expect(gameState.playerId, isNull);
       expect(gameState.isOnline, isFalse);
+      expect(gameState.isComputerThinking, isFalse);
     });
 
     test('should create a game state with custom values', () {
@@ -48,13 +49,16 @@ void main() {
         currentPlayer: Player.o,
         status: GameStatus.playing,
         gameId: 'updated-id',
+        isComputerThinking: true,
       );
 
       expect(updated.currentPlayer, equals(Player.o));
       expect(updated.status, equals(GameStatus.playing));
       expect(updated.gameId, equals('updated-id'));
+      expect(updated.isComputerThinking, isTrue);
       expect(updated.playerId, equals(original.playerId));
       expect(original.currentPlayer, equals(Player.x));
+      expect(original.isComputerThinking, isFalse);
     });
 
     test('isGameOver should return true when X wins', () {
@@ -144,6 +148,24 @@ void main() {
       );
 
       expect(gameState1, isNot(equals(gameState2)));
+    });
+
+    test('isComputerThinking should default to false', () {
+      final List<List<Player>> board = 3.createEmptyBoard();
+
+      final GameState gameState = GameState(board: board);
+
+      expect(gameState.isComputerThinking, isFalse);
+    });
+
+    test('isComputerThinking can be set via copyWith', () {
+      final List<List<Player>> board = 3.createEmptyBoard();
+
+      final GameState gameState = GameState(board: board);
+      final GameState updated = gameState.copyWith(isComputerThinking: true);
+
+      expect(gameState.isComputerThinking, isFalse);
+      expect(updated.isComputerThinking, isTrue);
     });
   });
 }

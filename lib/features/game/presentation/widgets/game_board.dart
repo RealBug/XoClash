@@ -156,6 +156,32 @@ class _GameBoardState extends State<GameBoard> {
                 animationsEnabled: widget.animationsEnabled,
                 onAnimationComplete: widget.onWinningLineAnimationComplete,
               ),
+            if (widget.gameState.isComputerThinking)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(color: boardColor.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(24)),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: boardColor,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: <BoxShadow>[BoxShadow(color: shadowColor, blurRadius: 20, spreadRadius: 5)],
+                      ),
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            widget.isDarkMode ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         );
       },
