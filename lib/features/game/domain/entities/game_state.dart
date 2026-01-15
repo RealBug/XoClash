@@ -27,55 +27,29 @@ enum GameModeType { online, offlineFriend, offlineComputer }
 
 @Freezed(toJson: false)
 abstract class WinningLine with _$WinningLine {
-  const factory WinningLine({
-    required int startRow,
-    required int startCol,
-    required int endRow,
-    required int endCol,
-  }) = _WinningLine;
+  const factory WinningLine({required int startRow, required int startCol, required int endRow, required int endCol}) = _WinningLine;
 }
 
 @Freezed(toJson: true)
 abstract class GameState with _$GameState {
   const factory GameState({
-    @JsonKey(name: GameStateJsonKeys.board)
-    @BoardJsonConverter()
-    required List<List<Player>> board,
-    @Default(Player.x)
-    @JsonKey(name: GameStateJsonKeys.currentPlayer)
-    @PlayerJsonConverter()
-    Player currentPlayer,
-    @Default(GameStatus.waiting)
-    @JsonKey(name: GameStateJsonKeys.status)
-    @GameStatusJsonConverter()
-    GameStatus status,
-    @JsonKey(name: GameStateJsonKeys.gameId)
-    String? gameId,
-    @JsonKey(name: GameStateJsonKeys.playerId)
-    String? playerId,
-    @Default(false)
-    @JsonKey(name: GameStateJsonKeys.isOnline)
-    bool isOnline,
-    @JsonKey(name: GameStateJsonKeys.gameMode)
-    @GameModeTypeJsonConverter()
-    GameModeType? gameMode,
-    @JsonKey(name: GameStateJsonKeys.computerDifficulty)
-    int? computerDifficulty,
-    @JsonKey(name: GameStateJsonKeys.playerXName)
-    String? playerXName,
-    @JsonKey(name: GameStateJsonKeys.playerOName)
-    String? playerOName,
-    @JsonKey(includeFromJson: false, includeToJson: false)
-    WinningLine? winningLine,
+    @JsonKey(name: GameStateJsonKeys.board) @BoardJsonConverter() required List<List<Player>> board,
+    @Default(Player.x) @JsonKey(name: GameStateJsonKeys.currentPlayer) @PlayerJsonConverter() Player currentPlayer,
+    @Default(GameStatus.waiting) @JsonKey(name: GameStateJsonKeys.status) @GameStatusJsonConverter() GameStatus status,
+    @JsonKey(name: GameStateJsonKeys.gameId) String? gameId,
+    @JsonKey(name: GameStateJsonKeys.playerId) String? playerId,
+    @Default(false) @JsonKey(name: GameStateJsonKeys.isOnline) bool isOnline,
+    @JsonKey(name: GameStateJsonKeys.gameMode) @GameModeTypeJsonConverter() GameModeType? gameMode,
+    @JsonKey(name: GameStateJsonKeys.computerDifficulty) int? computerDifficulty,
+    @JsonKey(name: GameStateJsonKeys.playerXName) String? playerXName,
+    @JsonKey(name: GameStateJsonKeys.playerOName) String? playerOName,
+    @JsonKey(includeFromJson: false, includeToJson: false) WinningLine? winningLine,
+    @Default(false) @JsonKey(includeFromJson: false, includeToJson: false) bool isComputerThinking,
   }) = _GameState;
 
   const GameState._();
 
-  factory GameState.fromJson(Map<String, dynamic> json) =>
-      _$GameStateFromJson(json);
+  factory GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
-  bool get isGameOver =>
-      status == GameStatus.xWon ||
-      status == GameStatus.oWon ||
-      status == GameStatus.draw;
+  bool get isGameOver => status == GameStatus.xWon || status == GameStatus.oWon || status == GameStatus.draw;
 }

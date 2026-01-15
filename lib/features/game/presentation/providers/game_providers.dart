@@ -182,19 +182,21 @@ class GameStateNotifier extends Notifier<GameState> {
     if (finalState.gameMode == GameModeType.offlineComputer &&
         finalState.currentPlayer == Player.o &&
         finalState.computerDifficulty != null) {
+      state = finalState.copyWith(isComputerThinking: true);
       await _makeComputerMove();
     }
   }
 
   Future<void> _makeComputerMove() async {
     if (state.isGameOver) {
+      state = state.copyWith(isComputerThinking: false);
       return;
     }
 
     _logger.debug('Computer making move: difficulty=${state.computerDifficulty}');
     final makeComputerMoveUseCase = ref.read(makeComputerMoveUseCaseProvider);
     final finalState = await makeComputerMoveUseCase.execute(state, state.computerDifficulty!);
-    state = finalState;
+    state = finalState.copyWith(isComputerThinking: false);
 
     final audioService = ref.read(audioServiceProvider);
     if (finalState.isGameOver) {
