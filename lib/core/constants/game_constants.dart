@@ -24,6 +24,14 @@ class GameConstants {
   static const int winCondition4x4 = 4;
   static const int winCondition5x5 = 4;
 
+  static const double cellMargin3x3 = 6.0;
+  static const double cellMargin4x4 = 4.0;
+  static const double cellMargin5x5 = 3.0;
+
+  static const double minCellSize = 40.0;
+  static const double maxCellSize = 120.0;
+  static const double boardContainerPadding = 8.0;
+
   static int getWinCondition(int boardSize) {
     switch (boardSize) {
       case 3:
@@ -34,6 +42,19 @@ class GameConstants {
         return winCondition5x5;
       default:
         return winCondition3x3;
+    }
+  }
+
+  static double getCellMargin(int boardSize) {
+    switch (boardSize) {
+      case 3:
+        return cellMargin3x3;
+      case 4:
+        return cellMargin4x4;
+      case 5:
+        return cellMargin5x5;
+      default:
+        return cellMargin3x3;
     }
   }
 }

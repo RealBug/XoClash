@@ -6,6 +6,7 @@ import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
 import 'package:tictac/features/game/domain/usecases/join_game_usecase.dart';
+import 'package:tictac/features/game/presentation/entities/join_game_ui_state.dart';
 import 'package:tictac/features/game/presentation/providers/game_providers.dart';
 
 class MockJoinGameUseCase extends Mock implements JoinGameUseCase {}

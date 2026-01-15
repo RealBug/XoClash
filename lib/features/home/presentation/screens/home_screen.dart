@@ -10,6 +10,7 @@ import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
 import 'package:tictac/core/widgets/branding/clickable_logo.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
+import 'package:tictac/core/widgets/ui/scrollable_section.dart';
 import 'package:tictac/features/home/presentation/widgets/home_divider.dart';
 import 'package:tictac/features/home/presentation/widgets/home_subtitle.dart';
 import 'package:tictac/features/home/presentation/widgets/home_title.dart';
@@ -73,48 +74,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         isDarkMode: isDarkMode,
         child: SafeArea(
           top: false,
-          child: Scrollbar(
+          child: ScrollableSection(
             controller: _scrollController,
-            thumbVisibility: true,
-            radius: const Radius.circular(4),
-            thickness: 6,
-            interactive: true,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: UIConstants.widgetSizeMaxWidth),
-                  child: Padding(
-                    padding: AppSpacing.paddingOnly(
-                      top: MediaQuery.of(context).padding.top + kToolbarHeight + AppSpacing.xl,
-                      left: AppSpacing.xl,
-                      right: AppSpacing.xl,
-                      bottom: AppSpacing.xl,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Gap(AppSpacing.xl * 2),
-                        const ClickableLogo(),
-                        Gap(AppSpacing.xl * 2.5),
-                        const HomeTitle(),
-                        Gap(AppSpacing.sm),
-                        const HomeSubtitle(),
-                        Gap(AppSpacing.xl * 2),
-                        const NewGameButton(),
-                        Gap(AppSpacing.lg),
-                        const StatisticsButton(),
-                        Gap(AppSpacing.xl),
-                        const HomeDivider(),
-                        Gap(AppSpacing.xl),
-                        JoinGameSection(
-                          gameIdController: _gameIdController,
-                          gameIdFocusNode: _gameIdFocusNode,
-                          onGameIdChanged: () => setState(() {}),
-                        ),
-                      ],
-                    ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: UIConstants.widgetSizeMaxWidth),
+                child: Padding(
+                  padding: AppSpacing.paddingOnly(
+                    top: MediaQuery.of(context).padding.top + kToolbarHeight + AppSpacing.xl,
+                    left: AppSpacing.xl,
+                    right: AppSpacing.xl,
+                    bottom: AppSpacing.xl,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Gap(AppSpacing.xl * 2),
+                      const ClickableLogo(),
+                      Gap(AppSpacing.xl * 2.5),
+                      const HomeTitle(),
+                      Gap(AppSpacing.sm),
+                      const HomeSubtitle(),
+                      Gap(AppSpacing.xl * 2),
+                      const NewGameButton(),
+                      Gap(AppSpacing.lg),
+                      const StatisticsButton(),
+                      Gap(AppSpacing.xl),
+                      const HomeDivider(),
+                      Gap(AppSpacing.xl),
+                      JoinGameSection(
+                        gameIdController: _gameIdController,
+                        gameIdFocusNode: _gameIdFocusNode,
+                        onGameIdChanged: () => setState(() {}),
+                      ),
+                    ],
                   ),
                 ),
               ),

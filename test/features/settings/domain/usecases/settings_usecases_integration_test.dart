@@ -6,19 +6,19 @@ import 'package:tictac/core/constants/language_codes.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
 import 'package:tictac/features/settings/domain/repositories/settings_repository.dart';
 import 'package:tictac/features/settings/domain/usecases/get_settings_usecase.dart';
-import 'package:tictac/features/settings/domain/usecases/save_settings_usecase.dart';
+import 'package:tictac/features/settings/domain/usecases/update_settings_usecase.dart';
 
 class MockSettingsRepository extends Mock implements SettingsRepository {}
 
 void main() {
   late MockSettingsRepository mockRepository;
   late GetSettingsUseCase getSettingsUseCase;
-  late SaveSettingsUseCase saveSettingsUseCase;
+  late UpdateSettingsUseCase updateSettingsUseCase;
 
   setUp(() {
     mockRepository = MockSettingsRepository();
     getSettingsUseCase = GetSettingsUseCase(mockRepository);
-    saveSettingsUseCase = SaveSettingsUseCase(mockRepository);
+    updateSettingsUseCase = UpdateSettingsUseCase(mockRepository);
   });
 
   setUpAll(() {
@@ -42,7 +42,7 @@ void main() {
       expect(initial.isDarkMode, isTrue);
       expect(initial.languageCode, equals(LanguageCodes.defaultLanguage));
 
-      await saveSettingsUseCase.execute(updatedSettings);
+      await updateSettingsUseCase.execute((_) => updatedSettings);
 
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => updatedSettings);
@@ -53,16 +53,21 @@ void main() {
     });
 
     test('should handle partial settings updates', () async {
+      const Settings defaultSettings = Settings();
       const Settings settings1 = Settings(isDarkMode: false);
       const Settings settings2 = Settings(isDarkMode: false, soundFxEnabled: false);
 
+      when(() => mockRepository.getSettings())
+          .thenAnswer((_) async => defaultSettings);
       when(() => mockRepository.saveSettings(any())).thenAnswer((_) async {});
 
-      await saveSettingsUseCase.execute(settings1);
-      await saveSettingsUseCase.execute(settings2);
+      await updateSettingsUseCase.execute((_) => settings1);
+      
+      when(() => mockRepository.getSettings())
+          .thenAnswer((_) async => settings1);
+      await updateSettingsUseCase.execute((_) => settings2);
 
-      verify(() => mockRepository.saveSettings(settings1)).called(1);
-      verify(() => mockRepository.saveSettings(settings2)).called(1);
+      verify(() => mockRepository.saveSettings(any())).called(2);
     });
 
     test('should preserve unchanged settings fields', () async {
@@ -78,7 +83,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.isDarkMode, equals(settings.isDarkMode));
@@ -105,7 +110,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.useEmojis, isTrue);
@@ -122,7 +127,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.xEmoji, isNull);
@@ -136,7 +141,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.languageCode, equals('invalid'));
@@ -149,7 +154,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.xShape, equals(''));
@@ -167,7 +172,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.isDarkMode, isFalse);
@@ -185,7 +190,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.isDarkMode, isTrue);
@@ -209,11 +214,12 @@ void main() {
     test('should throw when repository save fails', () async {
       const Settings settings = Settings();
 
+      when(() => mockRepository.getSettings()).thenAnswer((_) async => const Settings());
       when(() => mockRepository.saveSettings(any()))
           .thenThrow(Exception('Storage full'));
 
       expect(
-        () => saveSettingsUseCase.execute(settings),
+        () => updateSettingsUseCase.execute((_) => settings),
         throwsA(isA<Exception>()),
       );
     });
@@ -236,11 +242,12 @@ void main() {
     test('should handle timeout in save operation', () async {
       const Settings settings = Settings();
 
+      when(() => mockRepository.getSettings()).thenAnswer((_) async => const Settings());
       when(() => mockRepository.saveSettings(any())).thenAnswer(
         (_) => Future<void>.delayed(const Duration(seconds: 10)),
       );
 
-      final Future<void> future = saveSettingsUseCase.execute(settings).timeout(
+      final Future<void> future = updateSettingsUseCase.execute((_) => settings).timeout(
             const Duration(milliseconds: 100),
           );
 
@@ -254,12 +261,13 @@ void main() {
       const Settings settings2 = Settings(isDarkMode: false);
       const Settings settings3 = Settings(soundFxEnabled: false);
 
+      when(() => mockRepository.getSettings()).thenAnswer((_) async => const Settings());
       when(() => mockRepository.saveSettings(any())).thenAnswer((_) async {});
 
       await Future.wait(<Future<void>>[
-        saveSettingsUseCase.execute(settings1),
-        saveSettingsUseCase.execute(settings2),
-        saveSettingsUseCase.execute(settings3),
+        updateSettingsUseCase.execute((_) => settings1),
+        updateSettingsUseCase.execute((_) => settings2),
+        updateSettingsUseCase.execute((_) => settings3),
       ]);
 
       verify(() => mockRepository.saveSettings(any())).called(3);
@@ -288,15 +296,15 @@ void main() {
 
       final List<Future<void>> futures = <Future<void>>[
         getSettingsUseCase.execute(),
-        saveSettingsUseCase.execute(settings2),
+        updateSettingsUseCase.execute((_) => settings2),
         getSettingsUseCase.execute(),
-        saveSettingsUseCase.execute(settings1),
+        updateSettingsUseCase.execute((_) => settings1),
         getSettingsUseCase.execute(),
       ];
 
       await Future.wait(futures);
 
-      verify(() => mockRepository.getSettings()).called(3);
+      verify(() => mockRepository.getSettings()).called(5);
       verify(() => mockRepository.saveSettings(any())).called(2);
     });
   });
@@ -314,14 +322,14 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => englishSettings);
 
-      await saveSettingsUseCase.execute(englishSettings);
+      await updateSettingsUseCase.execute((_) => englishSettings);
       final Settings before = await getSettingsUseCase.execute();
       expect(before.languageCode, equals(LanguageCodes.defaultLanguage));
 
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => frenchSettings);
 
-      await saveSettingsUseCase.execute(frenchSettings);
+      await updateSettingsUseCase.execute((_) => frenchSettings);
       final Settings after = await getSettingsUseCase.execute();
       expect(after.languageCode, equals(LanguageCodes.french));
     });
@@ -335,10 +343,11 @@ void main() {
         isDarkMode: false,
       );
 
+      when(() => mockRepository.getSettings()).thenAnswer((_) async => const Settings());
       when(() => mockRepository.saveSettings(any())).thenAnswer((_) async {});
 
-      await saveSettingsUseCase.execute(beforeSettings);
-      await saveSettingsUseCase.execute(afterSettings);
+      await updateSettingsUseCase.execute((_) => beforeSettings);
+      await updateSettingsUseCase.execute((_) => afterSettings);
 
       final List<dynamic> captured =
           verify(() => mockRepository.saveSettings(captureAny())).captured;
@@ -355,11 +364,12 @@ void main() {
       const Settings darkSettings = Settings();
       const Settings lightSettings = Settings(isDarkMode: false);
 
+      when(() => mockRepository.getSettings()).thenAnswer((_) async => const Settings());
       when(() => mockRepository.saveSettings(any())).thenAnswer((_) async {});
 
-      await saveSettingsUseCase.execute(darkSettings);
-      await saveSettingsUseCase.execute(lightSettings);
-      await saveSettingsUseCase.execute(darkSettings);
+      await updateSettingsUseCase.execute((_) => darkSettings);
+      await updateSettingsUseCase.execute((_) => lightSettings);
+      await updateSettingsUseCase.execute((_) => darkSettings);
 
       verify(() => mockRepository.saveSettings(any())).called(3);
     });
@@ -374,7 +384,7 @@ void main() {
       when(() => mockRepository.getSettings())
           .thenAnswer((_) async => settings);
 
-      await saveSettingsUseCase.execute(settings);
+      await updateSettingsUseCase.execute((_) => settings);
       final Settings retrieved = await getSettingsUseCase.execute();
 
       expect(retrieved.isDarkMode, isTrue);

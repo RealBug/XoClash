@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:tictac/core/constants/app_constants.dart';
+import 'package:tictac/core/constants/game_constants.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
@@ -10,7 +11,6 @@ import 'package:tictac/features/game/presentation/widgets/game_cell.dart';
 import 'package:tictac/features/game/presentation/widgets/winning_line_overlay.dart';
 
 class GameBoard extends StatefulWidget {
-
   const GameBoard({
     super.key,
     required this.gameState,
@@ -75,8 +75,7 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    final boardColor =
-        widget.isDarkMode ? AppTheme.darkCardColor : AppTheme.lightCardColor;
+    final boardColor = widget.isDarkMode ? AppTheme.darkCardColor : AppTheme.lightCardColor;
     final shadowColor = widget.isDarkMode
         ? AppTheme.darkBackgroundColor.withValues(alpha: 0.5)
         : AppTheme.lightTextPrimary.withValues(alpha: 0.1);
@@ -85,49 +84,30 @@ class _GameBoardState extends State<GameBoard> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        const containerPadding = 8.0;
-        final maxWidth = constraints.maxWidth.isFinite
-            ? constraints.maxWidth
-            : MediaQuery.of(context).size.width;
-        final availableWidth = maxWidth - (containerPadding * 2);
-        final availableHeight =
-            constraints.maxHeight > 0 && constraints.maxHeight.isFinite
-                ? constraints.maxHeight - (containerPadding * 2)
-                : double.infinity;
+        final maxWidth = constraints.maxWidth.isFinite ? constraints.maxWidth : MediaQuery.of(context).size.width;
+        final availableWidth = maxWidth - (GameConstants.boardContainerPadding * 2);
+        final availableHeight = constraints.maxHeight > 0 && constraints.maxHeight.isFinite
+            ? constraints.maxHeight - (GameConstants.boardContainerPadding * 2)
+            : double.infinity;
 
         final boardSize = widget.gameState.board.length;
+        final cellMargin = GameConstants.getCellMargin(boardSize);
 
-        final cellMargin = boardSize == 3
-            ? 6.0
-            : boardSize == 4
-                ? 4.0
-                : 3.0;
+        final maxCellWidth = (availableWidth - (boardSize * cellMargin * 2)) / boardSize;
+        final maxCellHeight = availableHeight.isFinite ? (availableHeight - (boardSize * cellMargin * 2)) / boardSize : maxCellWidth;
 
-        final maxCellWidth =
-            (availableWidth - (boardSize * cellMargin * 2)) / boardSize;
-        final maxCellHeight = availableHeight.isFinite
-            ? (availableHeight - (boardSize * cellMargin * 2)) / boardSize
-            : maxCellWidth;
-
-        final cellSize =
-            math.min(maxCellWidth, maxCellHeight).clamp(40.0, 120.0);
+        final cellSize = math.min(maxCellWidth, maxCellHeight).clamp(GameConstants.minCellSize, GameConstants.maxCellSize);
 
         return Stack(
           children: <Widget>[
             SizedBox(
               width: maxWidth.isFinite ? maxWidth : null,
               child: Container(
-                padding: const EdgeInsets.all(containerPadding),
+                padding: const EdgeInsets.all(GameConstants.boardContainerPadding),
                 decoration: BoxDecoration(
                   color: boardColor,
                   borderRadius: BorderRadius.circular(24),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: shadowColor,
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
+                  boxShadow: <BoxShadow>[BoxShadow(color: shadowColor, blurRadius: 20, spreadRadius: 5)],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -135,21 +115,18 @@ class _GameBoardState extends State<GameBoard> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
-                      children: List<Widget>.generate(
-                          widget.gameState.board[row].length, (col) {
+                      children: List<Widget>.generate(widget.gameState.board[row].length, (col) {
                         return AnimatedCellWrapper(
                           key: ValueKey<String>('cell_${row}_${col}_$_resetKey'),
                           row: row,
                           col: col,
                           boardSize: widget.gameState.board.length,
                           animationsEnabled: widget.animationsEnabled,
-                          isCellEmpty:
-                              widget.gameState.board[row][col] == Player.none,
+                          isCellEmpty: widget.gameState.board[row][col] == Player.none,
                           isBoardEmpty: isBoardEmpty,
                           child: GameCell(
                             player: widget.gameState.board[row][col],
-                            isEnabled:
-                                _isCellEnabled(widget.gameState, row, col),
+                            isEnabled: _isCellEnabled(widget.gameState, row, col),
                             onTap: () => widget.onCellTap(row, col),
                             isDarkMode: widget.isDarkMode,
                             boardSize: widget.gameState.board.length,
@@ -175,9 +152,7 @@ class _GameBoardState extends State<GameBoard> {
                 boardSize: widget.gameState.board.length,
                 cellSize: cellSize,
                 cellMargin: cellMargin,
-                color: widget.gameState.status == GameStatus.xWon
-                    ? AppTheme.redAccent
-                    : AppTheme.yellowAccent,
+                color: widget.gameState.status == GameStatus.xWon ? AppTheme.redAccent : AppTheme.yellowAccent,
                 animationsEnabled: widget.animationsEnabled,
                 onAnimationComplete: widget.onWinningLineAnimationComplete,
               ),

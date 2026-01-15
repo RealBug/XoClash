@@ -11,7 +11,9 @@ import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/effects/confetti_widget.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
+import 'package:tictac/core/widgets/ui/scrollable_section.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
+import 'package:tictac/features/game/presentation/entities/game_board_settings.dart';
 import 'package:tictac/features/game/presentation/providers/game_providers.dart';
 import 'package:tictac/features/game/presentation/widgets/game_board.dart';
 import 'package:tictac/features/game/presentation/widgets/game_id_card.dart';
@@ -91,7 +93,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ? AppTheme.getPrimaryColor(isDarkMode).withValues(alpha: 0.8)
         : const Color(0xFFFF8C42);
 
-    final ({String? oEmoji, String oShape, bool useEmojis, String? xEmoji, String xShape}) gameBoardSettings = (
+    final gameBoardSettings = GameBoardSettings(
       xShape: ref.watch(xShapeProvider),
       oShape: ref.watch(oShapeProvider),
       xEmoji: ref.watch(xEmojiProvider),
@@ -148,16 +150,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    child: Scrollbar(
+                    child: ScrollableSection(
                       controller: _scrollController,
-                      thumbVisibility: true,
-                      radius: const Radius.circular(4),
-                      thickness: 6,
-                      interactive: true,
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: LayoutBuilder(
+                      child: LayoutBuilder(
                           builder: (BuildContext context, BoxConstraints constraints) {
                             return SizedBox(
                               width: constraints.maxWidth,
@@ -218,11 +213,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
           if (animationsEnabled && shouldShowConfetti)
             ConfettiWidget(
               isActive: _shouldShowConfetti,

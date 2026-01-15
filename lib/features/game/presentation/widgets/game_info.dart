@@ -15,13 +15,7 @@ import 'package:tictac/features/settings/presentation/providers/settings_provide
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
 
 class GameInfo extends ConsumerWidget {
-
-  const GameInfo({
-    super.key,
-    required this.gameState,
-    this.friendAvatar,
-    this.animationsEnabled = true,
-  });
+  const GameInfo({super.key, required this.gameState, this.friendAvatar, this.animationsEnabled = true});
   final GameState gameState;
   final String? friendAvatar;
   final bool animationsEnabled;
@@ -46,8 +40,8 @@ class GameInfo extends ConsumerWidget {
     final displayPlayerXName = playerXNameRaw.isNotEmpty ? playerXNameRaw : context.l10n.playerX;
     final displayPlayerOName = playerONameRaw.isNotEmpty
         ? (playerONameRaw.startsWith(AppConstants.aiPlayerNamePrefix) && gameState.computerDifficulty != null
-            ? AICharacter.getCharacter(gameState.computerDifficulty!).getDisplayName(context)
-            : playerONameRaw)
+              ? AICharacter.getCharacter(gameState.computerDifficulty!).getDisplayName(context)
+              : playerONameRaw)
         : null;
 
     var playerOScoreKey = gameState.playerOName;
@@ -81,7 +75,8 @@ class GameInfo extends ConsumerWidget {
           Gap(AppSpacing.sm),
           PlayerIndicator(
             key: ValueKey<String>(
-                '${displayPlayerOName ?? context.l10n.playerO}_${_getPlayerOAvatar(context, gameState, updatedAvatar, currentUsername)}'),
+              '${displayPlayerOName ?? context.l10n.playerO}_${_getPlayerOAvatar(context, gameState, updatedAvatar, currentUsername)}',
+            ),
             context: context,
             label: displayPlayerOName ?? context.l10n.playerO,
             isActive: gameState.currentPlayer == Player.o && !gameState.isGameOver,
@@ -138,3 +133,4 @@ class GameInfo extends ConsumerWidget {
     return null;
   }
 }
+
