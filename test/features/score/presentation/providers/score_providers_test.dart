@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/features/score/domain/entities/player_score.dart';
 import 'package:tictac/features/score/domain/repositories/score_repository.dart';
 import 'package:tictac/features/score/domain/usecases/calculate_score_update_usecase.dart';
@@ -11,7 +12,6 @@ import 'package:tictac/features/score/domain/usecases/update_player_score_usecas
 import 'package:tictac/features/score/domain/usecases/update_score_usecase.dart';
 import 'package:tictac/features/score/presentation/providers/score_providers.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 class MockGetAllScoresUseCase extends Mock implements GetAllScoresUseCase {}
 
@@ -40,11 +40,6 @@ void setUpAllFallbacks() {
 void main() {
   setUpAll(() {
     setUpAllFallbacks();
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
 
   late MockGetAllScoresUseCase mockGetAllScoresUseCase;
@@ -99,7 +94,7 @@ void main() {
 
       // With AsyncNotifier, we need to wait for the build() to complete
       await container.read(scoresProvider.future);
-      
+
       final List<PlayerScore>? state = container.read(scoresProvider).value;
       expect(state, isEmpty);
 

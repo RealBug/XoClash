@@ -3,15 +3,13 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:injectable/injectable.dart';
 import 'package:tictac/core/constants/audio_constants.dart';
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/services/logger_service.dart';
 
-@Injectable(as: AudioService)
 class AudioServiceImpl implements AudioService {
 
-  AudioServiceImpl(this._logger, [@factoryParam AudioPlayer? audioPlayer])
+  AudioServiceImpl(this._logger, [AudioPlayer? audioPlayer])
       : _fxPlayer = audioPlayer ?? AudioPlayer();
   final LoggerService _logger;
   final AudioPlayer _fxPlayer;

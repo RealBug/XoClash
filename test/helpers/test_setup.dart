@@ -1,19 +1,11 @@
-import 'package:get_it/get_it.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/core/services/logger_service_impl.dart';
 
-void setupTestGetIt() {
-  final GetIt getIt = GetIt.instance;
-  
-  if (!getIt.isRegistered<LoggerService>()) {
-    getIt.registerLazySingleton<LoggerService>(() => LoggerServiceImpl());
-  }
+ProviderContainer createTestContainer() {
+  return ProviderContainer();
 }
 
-void tearDownTestGetIt() {
-  final GetIt getIt = GetIt.instance;
-  if (getIt.isRegistered<LoggerService>()) {
-    getIt.unregister<LoggerService>();
-  }
-}
-
+final testLoggerServiceProvider = Provider<LoggerService>(
+  (ref) => LoggerServiceImpl(),
+);

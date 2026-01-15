@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:tictac/core/constants/logger_constants.dart';
 import 'package:tictac/core/services/logger_service.dart';
 
-@LazySingleton(as: LoggerService)
 class LoggerServiceImpl implements LoggerService {
 
   LoggerServiceImpl();

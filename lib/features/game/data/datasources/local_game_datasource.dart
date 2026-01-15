@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/core/services/logger_service.dart';
@@ -14,9 +13,7 @@ abstract class LocalGameDataSource {
   Future<void> deleteGame(String gameId);
 }
 
-@Injectable(as: LocalGameDataSource)
 class LocalGameDataSourceImpl implements LocalGameDataSource {
-
   LocalGameDataSourceImpl(this._logger);
   final LoggerService _logger;
   static const String _gamesKey = AppConstants.storageKeyGames;
@@ -55,7 +52,11 @@ class LocalGameDataSourceImpl implements LocalGameDataSource {
       _logger.debug('Game found locally: $gameId');
       return GameState.fromJson(gameJson as Map<String, dynamic>);
     } catch (e, stackTrace) {
-      _logger.error('Failed to get game from local storage: $gameId', e, stackTrace);
+      _logger.error(
+        'Failed to get game from local storage: $gameId',
+        e,
+        stackTrace,
+      );
       rethrow;
     }
   }
@@ -96,4 +97,3 @@ class LocalGameDataSourceImpl implements LocalGameDataSource {
     return Map<String, dynamic>.from(jsonDecode(gamesJson));
   }
 }
-

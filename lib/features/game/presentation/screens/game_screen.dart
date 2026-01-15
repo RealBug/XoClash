@@ -21,7 +21,14 @@ import 'package:tictac/features/game/presentation/widgets/game_info.dart';
 import 'package:tictac/features/game/presentation/widgets/game_result_helper.dart';
 import 'package:tictac/features/game/presentation/widgets/game_result_snackbar.dart';
 import 'package:tictac/features/settings/presentation/providers/settings_providers.dart'
-    show isDarkModeProvider, animationsEnabledProvider, xShapeProvider, oShapeProvider, xEmojiProvider, oEmojiProvider, useEmojisProvider;
+    show
+        isDarkModeProvider,
+        animationsEnabledProvider,
+        xShapeProvider,
+        oShapeProvider,
+        xEmojiProvider,
+        oEmojiProvider,
+        useEmojisProvider;
 import 'package:tictac/features/user/domain/entities/user.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
 
@@ -66,7 +73,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameState = ref.watch(gameStateProvider);
     final isDarkMode = ref.watch(isDarkModeProvider);
     final animationsEnabled = ref.watch(animationsEnabledProvider);
-    final user = ref.watch(userProvider.select((asyncValue) => asyncValue.value));
+    final user = ref.watch(
+      userProvider.select((asyncValue) => asyncValue.value),
+    );
 
     final gameResultInfoUseCase = ref.read(getGameResultInfoUseCaseProvider);
 

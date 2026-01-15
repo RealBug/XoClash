@@ -1,22 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/di/injection.dart';
-import 'package:tictac/features/score/data/datasources/score_datasource.dart';
+import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/features/score/domain/entities/player_score.dart';
-import 'package:tictac/features/score/domain/repositories/score_repository.dart';
 import 'package:tictac/features/score/domain/usecases/calculate_score_update_usecase.dart';
 import 'package:tictac/features/score/domain/usecases/get_all_scores_usecase.dart';
 import 'package:tictac/features/score/domain/usecases/get_player_score_usecase.dart';
 import 'package:tictac/features/score/domain/usecases/reset_scores_usecase.dart';
 import 'package:tictac/features/score/domain/usecases/update_player_score_usecase.dart';
 import 'package:tictac/features/score/domain/usecases/update_score_usecase.dart';
-
-final Provider<ScoreDataSource> scoreDataSourceProvider = Provider<ScoreDataSource>(
-  (Ref ref) => getIt<ScoreDataSource>(),
-);
-
-final Provider<ScoreRepository> scoreRepositoryProvider = Provider<ScoreRepository>(
-  (Ref ref) => getIt<ScoreRepository>(),
-);
 
 final Provider<GetPlayerScoreUseCase> getPlayerScoreUseCaseProvider = Provider<GetPlayerScoreUseCase>(
   (Ref ref) => GetPlayerScoreUseCase(ref.watch(scoreRepositoryProvider)),

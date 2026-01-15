@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
@@ -10,7 +9,6 @@ abstract class SettingsDataSource {
   Future<void> saveSettings(Settings settings);
 }
 
-@Injectable(as: SettingsDataSource)
 class SettingsDataSourceImpl implements SettingsDataSource {
   static const String _settingsKey = AppConstants.storageKeySettings;
 

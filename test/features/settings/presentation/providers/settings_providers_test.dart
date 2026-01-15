@@ -8,7 +8,6 @@ import 'package:tictac/features/settings/domain/usecases/get_settings_usecase.da
 import 'package:tictac/features/settings/domain/usecases/update_settings_usecase.dart';
 import 'package:tictac/features/settings/presentation/providers/settings_providers.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 class MockGetSettingsUseCase extends Mock implements GetSettingsUseCase {}
 
@@ -24,11 +23,6 @@ void setUpAllFallbacks() {
 void main() {
   setUpAll(() {
     setUpAllFallbacks();
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
   late MockGetSettingsUseCase mockGetSettingsUseCase;
   late MockUpdateSettingsUseCase mockUpdateSettingsUseCase;

@@ -1,9 +1,7 @@
-import 'package:injectable/injectable.dart';
 import 'package:tictac/features/score/data/datasources/score_datasource.dart';
 import 'package:tictac/features/score/domain/entities/player_score.dart';
 import 'package:tictac/features/score/domain/repositories/score_repository.dart';
 
-@Injectable(as: ScoreRepository)
 class ScoreRepositoryImpl implements ScoreRepository {
 
   ScoreRepositoryImpl({
@@ -31,22 +29,3 @@ class ScoreRepositoryImpl implements ScoreRepository {
     await dataSource.resetScores();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

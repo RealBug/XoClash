@@ -1,21 +1,17 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:injectable/injectable.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/game/data/services/game_backend_service.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 
-@Injectable(as: GameBackendService)
 class FirebaseGameBackendService implements GameBackendService {
-
-  FirebaseGameBackendService(
-    @factoryParam FirebaseFirestore? firestore,
-    this._logger,
-  ) : _firestoreParam = firestore;
+  FirebaseGameBackendService(FirebaseFirestore? firestore, this._logger)
+    : _firestoreParam = firestore;
   final FirebaseFirestore? _firestoreParam;
   final LoggerService _logger;
-  final Map<String, StreamSubscription<dynamic>> _subscriptions = <String, StreamSubscription<dynamic>>{};
+  final Map<String, StreamSubscription<dynamic>> _subscriptions =
+      <String, StreamSubscription<dynamic>>{};
 
   late final FirebaseFirestore _firestore =
       _firestoreParam ?? _getFirestoreOrThrow();
@@ -40,7 +36,9 @@ class FirebaseGameBackendService implements GameBackendService {
   Future<GameState> joinGame(String gameId) async {
     _logger.info('Joining game via Firestore: $gameId');
     try {
-      final DocumentSnapshot<Map<String, dynamic>> doc = await _gamesCollection.doc(gameId).get();
+      final DocumentSnapshot<Map<String, dynamic>> doc = await _gamesCollection
+          .doc(gameId)
+          .get();
 
       if (!doc.exists) {
         throw Exception('Game not found: $gameId');
@@ -63,10 +61,12 @@ class FirebaseGameBackendService implements GameBackendService {
     Player player,
   ) async {
     _logger.debug(
-        'Making move in Firestore game $gameId: player=$player, row=$row, col=$col');
+      'Making move in Firestore game $gameId: player=$player, row=$row, col=$col',
+    );
 
     try {
-      final DocumentReference<Map<String, dynamic>> docRef = _gamesCollection.doc(gameId);
+      final DocumentReference<Map<String, dynamic>> docRef = _gamesCollection
+          .doc(gameId);
       final DocumentSnapshot<Map<String, dynamic>> doc = await docRef.get();
 
       if (!doc.exists) {
@@ -80,13 +80,19 @@ class FirebaseGameBackendService implements GameBackendService {
       newBoard[row][col] = player;
 
       await docRef.update(<Object, Object?>{
-        'board':
-            newBoard.map((List<Player> r) => r.map((Player p) => p.toString()).toList()).toList(),
-        'lastMove': <String, Object>{'row': row, 'col': col, 'player': player.toString()},
+        'board': newBoard
+            .map((List<Player> r) => r.map((Player p) => p.toString()).toList())
+            .toList(),
+        'lastMove': <String, Object>{
+          'row': row,
+          'col': col,
+          'player': player.toString(),
+        },
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      final DocumentSnapshot<Map<String, dynamic>> updatedDoc = await docRef.get();
+      final DocumentSnapshot<Map<String, dynamic>> updatedDoc = await docRef
+          .get();
       _logger.debug('Move successful in game: $gameId');
       return GameState.fromJson(updatedDoc.data()!);
     } catch (e, stackTrace) {
@@ -99,7 +105,9 @@ class FirebaseGameBackendService implements GameBackendService {
   Future<GameState> getGameState(String gameId) async {
     _logger.debug('Getting game state from Firestore: $gameId');
     try {
-      final DocumentSnapshot<Map<String, dynamic>> doc = await _gamesCollection.doc(gameId).get();
+      final DocumentSnapshot<Map<String, dynamic>> doc = await _gamesCollection
+          .doc(gameId)
+          .get();
 
       if (!doc.exists) {
         throw Exception('Game not found: $gameId');
@@ -116,24 +124,33 @@ class FirebaseGameBackendService implements GameBackendService {
   Stream<GameState> watchGame(String gameId) {
     _logger.info('Watching Firestore game: $gameId');
 
-    return _gamesCollection.doc(gameId).snapshots().map<GameState>((DocumentSnapshot<Map<String, dynamic>> snapshot) {
-      if (!snapshot.exists) {
-        throw Exception('Game not found: $gameId');
-      }
+    return _gamesCollection
+        .doc(gameId)
+        .snapshots()
+        .map<GameState>((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+          if (!snapshot.exists) {
+            throw Exception('Game not found: $gameId');
+          }
 
-      _logger.debug('Game update received from Firestore: $gameId');
-      return GameState.fromJson(snapshot.data()!);
-    }).handleError((Object error, StackTrace stackTrace) {
-      _logger.error(
-          'Firestore stream error for game: $gameId', error, stackTrace);
-      throw error;
-    });
+          _logger.debug('Game update received from Firestore: $gameId');
+          return GameState.fromJson(snapshot.data()!);
+        })
+        .handleError((Object error, StackTrace stackTrace) {
+          _logger.error(
+            'Firestore stream error for game: $gameId',
+            error,
+            stackTrace,
+          );
+          throw error;
+        });
   }
 
   @override
   Future<void> leaveGame(String gameId) async {
     _logger.info('Leaving Firestore game: $gameId');
-    final StreamSubscription<dynamic>? subscription = _subscriptions.remove(gameId);
+    final StreamSubscription<dynamic>? subscription = _subscriptions.remove(
+      gameId,
+    );
     await subscription?.cancel();
   }
 }

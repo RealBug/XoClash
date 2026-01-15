@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:injectable/injectable.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/game/data/datasources/local_game_datasource.dart';
@@ -9,7 +8,6 @@ import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
 import 'package:tictac/features/game/domain/repositories/game_repository.dart';
 
-@Injectable(as: GameRepository)
 class GameRepositoryImpl implements GameRepository {
 
   GameRepositoryImpl({

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/features/score/domain/entities/player_score.dart';
@@ -12,7 +11,6 @@ abstract class ScoreDataSource {
   Future<void> resetScores();
 }
 
-@Injectable(as: ScoreDataSource)
 class ScoreDataSourceImpl implements ScoreDataSource {
   static const String _scoresKey = AppConstants.storageKeyScores;
 

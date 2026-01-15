@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/auth/data/services/auth_backend_service.dart';
 
@@ -15,7 +14,6 @@ abstract class AuthDataSource {
   Future<void> deleteAccount();
 }
 
-@Injectable(as: AuthDataSource)
 class AuthDataSourceImpl implements AuthDataSource {
 
   AuthDataSourceImpl(

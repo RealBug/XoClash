@@ -1,9 +1,7 @@
-import 'package:injectable/injectable.dart';
 import 'package:tictac/features/user/data/datasources/user_datasource.dart';
 import 'package:tictac/features/user/domain/entities/user.dart';
 import 'package:tictac/features/user/domain/repositories/user_repository.dart';
 
-@Injectable(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {
 
   UserRepositoryImpl({
@@ -31,4 +29,3 @@ class UserRepositoryImpl implements UserRepository {
     await dataSource.deleteUser();
   }
 }
-

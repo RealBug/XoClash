@@ -96,96 +96,65 @@ This project follows **Clean Architecture** principles with a **Feature-First** 
 - **Backend Abstraction**: Data sources depend on abstract backend services (easily replaceable)
 - **Use Cases**: Business logic encapsulated in use cases (53 use cases, 100% coverage)
 - **Use Case Pattern Enforcement**: All providers use use cases exclusively - no direct repository calls
-- **Hybrid DI Strategy**: GetIt for technical services, Riverpod for state management
+- **Pure Riverpod DI**: Single unified dependency injection system
 - **State Management**: Riverpod for reactive state management
 - **Repository Pattern**: Abstract data access through repositories
 
 ### Dependency Injection Strategy
 
-The project uses a **hybrid approach** combining **GetIt** (via `Injectable`) and **Riverpod** for optimal separation of concerns:
+The project uses **pure Riverpod** for all dependency injection (see [ADR-0003](docs/adr/0003-pure-riverpod-di.md)).
 
 #### Architecture Overview
 
-- **GetIt + Injectable**: Used for **technical services** and infrastructure components
-  - Services: `LoggerService`, `AudioService`, `AppInfoService`
-  - Data Sources: `LocalGameDataSource`, `RemoteGameDataSource`, etc.
-  - Repositories: `GameRepository`, `UserRepository`, `SettingsRepository`, etc.
-  - Backend Services: `FirebaseGameBackendService`, `FirebaseAuthBackendService`
+All services, repositories, and data sources are defined as Riverpod providers in `lib/core/providers/service_providers.dart`:
 
-- **Riverpod**: Used for **state management** and business logic
-  - Notifiers: `GameStateNotifier`, `UserNotifier`, `SettingsNotifier`, etc.
-  - Providers: Wrapper providers that expose GetIt services to Riverpod
-  - Use Cases: Accessed via Riverpod providers
+```dart
+// Services
+final loggerServiceProvider = Provider<LoggerService>(
+  (ref) => LoggerServiceImpl(),
+);
+
+final audioServiceProvider = Provider<AudioService>(
+  (ref) => AudioServiceImpl(ref.watch(loggerServiceProvider)),
+);
+
+// Repositories
+final userRepositoryProvider = Provider<UserRepository>(
+  (ref) => UserRepositoryImpl(dataSource: ref.watch(userDataSourceProvider)),
+);
+```
 
 #### Why This Approach?
 
-1. **Separation of Concerns**: 
-   - GetIt handles infrastructure (services, data access)
-   - Riverpod handles application state and UI reactivity
+1. **Simplicity**: Single DI system to understand
+2. **No code generation**: No need for `build_runner` for DI
+3. **Testability**: All providers easily overridable in tests via `ProviderContainer`
+4. **Clear dependency graph**: `ref.watch()` makes dependencies explicit
 
-2. **Testability**: 
-   - Services can be easily mocked in GetIt
-   - State management can be tested independently with Riverpod
+#### Usage in Notifiers
 
-3. **Best of Both Worlds**:
-   - GetIt's compile-time safety with `@Injectable` annotations
-   - Riverpod's reactive state management and provider system
-
-#### Implementation Pattern
-
-**Services in GetIt** (annotated with `@Injectable` or `@LazySingleton`):
-```dart
-@LazySingleton(as: LoggerService)
-class LoggerServiceImpl implements LoggerService { ... }
-
-@Injectable(as: GameRepository)
-class GameRepositoryImpl implements GameRepository { ... }
-```
-
-**Services Exposed to Riverpod** (via wrapper providers):
-```dart
-// lib/core/providers/service_providers.dart
-final loggerServiceProvider = Provider<LoggerService>(
-  (ref) => getIt<LoggerService>(),  // Wraps GetIt service
-);
-
-final gameRepositoryProvider = Provider<GameRepository>(
-  (ref) => getIt<GameRepository>(),  // Wraps GetIt repository
-);
-```
-
-**Usage in Notifiers** (always via Riverpod):
 ```dart
 class UserNotifier extends Notifier<User?> {
   Future<void> _loadUser() async {
-    // ✅ GOOD: Use Riverpod provider
     final logger = ref.read(loggerServiceProvider);
     logger.debug('Loading user');
-    
-    // ❌ BAD: Direct GetIt access (avoid in Notifiers)
-    // final logger = getIt<LoggerService>();
   }
 }
 ```
 
-#### Rules
+#### Testing Pattern
 
-1. ✅ **Use GetIt directly** only in:
-   - `main.dart` (before Riverpod is initialized)
-   - Service implementations themselves
-   - Test setup/teardown
+```dart
+late ProviderContainer container;
 
-2. ✅ **Use Riverpod providers** in:
-   - All Notifiers and state management code
-   - Widgets (via `ref.read()` or `ref.watch()`)
-   - Use cases accessed from Notifiers
-
-3. ❌ **Never use GetIt directly** in:
-   - Notifiers
-   - Widgets
-   - Presentation layer code
-
-This separation ensures clean architecture boundaries and makes the codebase more maintainable and testable.
+setUp(() {
+  container = ProviderContainer(
+    overrides: [
+      userRepositoryProvider.overrideWithValue(mockUserRepository),
+    ],
+  );
+});
+```
 
 ## 🚀 Installation & Configuration
 
@@ -212,41 +181,40 @@ This separation ensures clean architecture boundaries and makes the codebase mor
    fvm install
    fvm use
    ```
-   
+
    This will install and use the Flutter version specified in `.fvmrc`.
 
 3. **Install dependencies**
    ```bash
    # If using FVM
    fvm flutter pub get
-   
+
    # Or if using Flutter directly
    flutter pub get
    ```
 
-4. **Generate code** (required for Injectable, Freezed, etc.)
-   
-   The project uses code generation for dependency injection and immutable data classes. You **must** run build_runner before running the app:
-   
+4. **Generate code** (required for Freezed)
+
+   The project uses code generation for immutable data classes. You **must** run build_runner before running the app:
+
    ```bash
    # If using FVM
    fvm flutter pub run build_runner build --delete-conflicting-outputs
-   
+
    # Or if using Flutter directly
    flutter pub run build_runner build --delete-conflicting-outputs
    ```
-   
+
    This generates:
-   - Dependency injection configuration (`injection.config.dart`)
    - Freezed data classes (`*.freezed.dart` files)
-   
+
    See the [Code Generation with Build Runner](#code-generation-with-build-runner) section for more details.
 
 5. **Run the app**
    ```bash
    # If using FVM
    fvm flutter run
-   
+
    # Or if using Flutter directly
    flutter run
    ```
@@ -355,9 +323,6 @@ lib/
 │   │   ├── language_codes.dart
 │   │   ├── logger_constants.dart
 │   │   └── ui_constants.dart
-│   ├── di/                          # Dependency injection
-│   │   ├── injection.dart
-│   │   └── injection.config.dart    # Generated
 │   ├── domain/                      # Core domain entities
 │   │   └── errors/                  # Error handling
 │   │       └── app_exception.dart
@@ -526,13 +491,11 @@ features/{feature}/
 - **Dart** 3.2+ - Programming language
 - **FVM** - Flutter Version Manager
 
-**State Management:**
-- **Riverpod** 3.0+ - Reactive state management
+**State Management & DI:**
+- **Riverpod** 3.0+ - Reactive state management and dependency injection
 - **Riverpod Generator** 3.0+ - Code generation for providers
 
-**Architecture & DI:**
-- **Injectable** 2.7+ - Dependency injection
-- **GetIt** 9.2+ - Service locator
+**Architecture:**
 - **Build Runner** 2.10+ - Code generation tool
 - **Auto Route** 11.1+ - Declarative routing
 
@@ -739,17 +702,12 @@ The project uses [build_runner](https://pub.dev/packages/build_runner) for code 
 
 The project uses code generation for:
 
-1. **Injectable** - Dependency injection setup
-   - Generates: `lib/core/di/injection.config.dart`
-   - When: After adding/removing `@Injectable` or `@LazySingleton` annotations
-   - Purpose: Automatically wires up dependency injection
-
-2. **Freezed** - Immutable data classes
+1. **Freezed** - Immutable data classes
    - Generates: `*.freezed.dart` files (e.g., `settings.freezed.dart`)
    - When: After modifying `@freezed` classes or their properties
    - Purpose: Generates `copyWith`, `toString`, `==`, `hashCode`, and JSON serialization
 
-3. **Riverpod Generator** - Provider generation (if used)
+2. **Riverpod Generator** - Provider generation (if used)
    - Generates: `*.g.dart` files for providers
    - When: After modifying `@riverpod` annotations
    - Purpose: Generates type-safe providers
@@ -789,19 +747,17 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 You need to run build_runner when:
 - ✅ After cloning the repository (first-time setup)
-- ✅ After adding new `@Injectable` or `@LazySingleton` annotations
 - ✅ After modifying `@freezed` classes (adding/removing properties)
 - ✅ After pulling changes that include generated files
-- ✅ When you see errors about missing `.freezed.dart` or `.config.dart` files
+- ✅ When you see errors about missing `.freezed.dart` files
 - ✅ After updating dependencies that use code generation
 
-**Note:** Generated files (`.freezed.dart`, `.config.dart`, `.g.dart`) should **not** be manually edited. They are automatically generated and will be overwritten.
+**Note:** Generated files (`.freezed.dart`, `.g.dart`) should **not** be manually edited. They are automatically generated and will be overwritten.
 
 #### Generated Files Location
 
 Generated files are placed next to their source files:
 - `lib/features/settings/domain/entities/settings.dart` → `lib/features/settings/domain/entities/settings.freezed.dart`
-- `lib/core/di/injection.dart` → `lib/core/di/injection.config.dart`
 - `lib/features/*/presentation/providers/*.dart` → `lib/features/*/presentation/providers/*.g.dart` (if using Riverpod Generator)
 
 #### Troubleshooting
@@ -830,16 +786,15 @@ When adding a new feature, follow the feature-first structure:
    - **ARCHITECTURE RULE**: Providers MUST use use cases, NEVER call repositories directly
    - Create use case providers in `{feature}_providers.dart`
    - Access use cases via `ref.read(useCaseProvider)` in Notifiers
-5. **Dependency Injection**: 
-   - Annotate service/data implementations with `@Injectable` or `@LazySingleton`
-   - Create Riverpod providers for use cases (not just services)
-   - Create Riverpod providers that wrap GetIt services (see [Dependency Injection Strategy](#dependency-injection-strategy))
-   - Use `ref.read(provider)` in Notifiers, never `getIt<>()` directly
+5. **Dependency Injection**:
+   - Add new providers to `lib/core/providers/service_providers.dart`
+   - Create Riverpod providers for use cases
+   - Use `ref.read(provider)` in Notifiers
 6. **Tests**: Write tests mirroring the feature structure in `test/features/{feature_name}/`
    - **MANDATORY**: Every use case MUST have a dedicated test file
    - Test use cases in isolation with mocked repositories
    - Test providers with mocked use cases
-7. **Regenerate code**: Run `build_runner` to update DI configuration
+7. **Run tests**: Ensure all tests pass
 
 **Example: Adding a New Feature Operation**
 
@@ -848,9 +803,9 @@ When adding a new feature, follow the feature-first structure:
 // lib/features/user/domain/usecases/update_email_usecase.dart
 class UpdateEmailUseCase {
   final UserRepository _userRepository;
-  
+
   UpdateEmailUseCase(this._userRepository);
-  
+
   Future<User> execute(User? currentUser, String newEmail) async {
     // Business logic: validation, transformation
     final trimmedEmail = newEmail.trim();
@@ -873,7 +828,7 @@ final updateEmailUseCaseProvider = Provider<UpdateEmailUseCase>(
 // 3. Use in Notifier (✅ GOOD)
 class UserNotifier extends AsyncNotifier<User?> {
   UpdateEmailUseCase get updateEmailUseCase => ref.read(updateEmailUseCaseProvider);
-  
+
   Future<void> updateEmail(String newEmail) async {
     final currentUser = state.value;
     final updatedUser = await updateEmailUseCase.execute(currentUser, newEmail);
@@ -929,9 +884,10 @@ bool _isOfflineGame(GameState gameState) {
 
 ### Logging
 
-Logging is done through the `LoggerService`:
+Logging is done through the `LoggerService` via Riverpod:
 ```dart
-final logger = getIt<LoggerService>();
+// In Notifiers/Providers
+final logger = ref.read(loggerServiceProvider);
 logger.info('Message');
 logger.error('Error message', error, stackTrace);
 ```

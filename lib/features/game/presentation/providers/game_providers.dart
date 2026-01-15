@@ -1,12 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/di/injection.dart';
-import 'package:tictac/core/providers/service_providers.dart' show audioServiceProvider, loggerServiceProvider;
+import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/logger_service.dart';
-import 'package:tictac/features/game/data/datasources/local_game_datasource.dart';
-import 'package:tictac/features/game/data/datasources/remote_game_datasource.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
-import 'package:tictac/features/game/domain/repositories/game_repository.dart';
 import 'package:tictac/features/game/domain/usecases/check_winner_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/create_game_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/create_offline_game_usecase.dart';
@@ -25,12 +21,6 @@ import 'package:tictac/features/score/domain/usecases/calculate_score_update_use
 import 'package:tictac/features/score/presentation/providers/score_providers.dart';
 import 'package:tictac/features/score/presentation/providers/session_scores_provider.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
-
-final Provider<LocalGameDataSource> localDataSourceProvider = Provider<LocalGameDataSource>((Ref ref) => getIt<LocalGameDataSource>());
-
-final Provider<RemoteGameDataSource> remoteDataSourceProvider = Provider<RemoteGameDataSource>((Ref ref) => getIt<RemoteGameDataSource>());
-
-final Provider<GameRepository> gameRepositoryProvider = Provider<GameRepository>((Ref ref) => getIt<GameRepository>());
 
 final Provider<CreateGameUseCase> createGameUseCaseProvider = Provider<CreateGameUseCase>(
   (Ref ref) => CreateGameUseCase(ref.watch(gameRepositoryProvider)),

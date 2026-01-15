@@ -30,33 +30,33 @@ Complete guide to configure Firebase (Firestore + Authentication) for the XO Cla
    ```
 
 3. **Add applications:**
-   
+
    **iOS:**
    ```
    Bundle ID: com.yourcompany.tictac
    Download GoogleService-Info.plist
    Place in: ios/Runner/
    ```
-   
+
    **Android:**
    ```
    Package name: com.yourcompany.tictac
    Download google-services.json
    Place in: android/app/
    ```
-   
+
    **macOS (if needed):**
    ```
    Bundle ID: com.yourcompany.tictac
    Download GoogleService-Info.plist
    Place in: macos/Runner/
    ```
-   
+
    **Web:**
    ```
    App nickname: XO Clash Web
    Enable Firebase Hosting (optional)
-   
+
    Firebase Web Configuration (auto-generated):
    - apiKey: "AIzaSy..."
    - authDomain: "xo-clash.firebaseapp.com"
@@ -64,7 +64,7 @@ Complete guide to configure Firebase (Firestore + Authentication) for the XO Cla
    - storageBucket: "xo-clash.firebasestorage.app"
    - messagingSenderId: "..."
    - appId: "1:...:web:..."
-   
+
    Note: These values will be added in the code (see section 4.2)
    ```
 
@@ -82,7 +82,7 @@ Complete guide to configure Firebase (Firestore + Authentication) for the XO Cla
    ```
    Menu: Firestore Database
    → Create database
-   
+
    Mode: Start in test mode (30 days)
    Region: europe-west1 (Belgium) or closest to you
    ```
@@ -145,47 +145,47 @@ service cloud.firestore {
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Games collection
     match /games/{gameId} {
       // Everyone can read public games
       allow read: if true;
-      
+
       // Only authenticated users can create
       allow create: if request.auth != null;
-      
+
       // Only game players can update
-      allow update: if request.auth != null 
-        && (request.auth.uid == resource.data.player1Id 
+      allow update: if request.auth != null
+        && (request.auth.uid == resource.data.player1Id
             || request.auth.uid == resource.data.player2Id
             || request.auth.uid == resource.data.playerId);
-      
+
       // Only creator can delete
-      allow delete: if request.auth != null 
+      allow delete: if request.auth != null
         && request.auth.uid == resource.data.playerId;
     }
-    
+
     // Users collection
     match /users/{userId} {
       // Everyone can read public profiles
       allow read: if true;
-      
+
       // Only user can modify their profile
-      allow create, update: if request.auth != null 
+      allow create, update: if request.auth != null
         && request.auth.uid == userId;
-      
-      allow delete: if request.auth != null 
+
+      allow delete: if request.auth != null
         && request.auth.uid == userId;
     }
-    
+
     // History collection
     match /history/{userId}/games/{gameId} {
       // Only user can read their history
-      allow read: if request.auth != null 
+      allow read: if request.auth != null
         && request.auth.uid == userId;
-      
+
       // Only user can create/modify their history
-      allow create, update: if request.auth != null 
+      allow create, update: if request.auth != null
         && request.auth.uid == userId;
     }
   }
@@ -282,7 +282,7 @@ Support email: your-email@gmail.com
 
 **Configuration:**
 ```
-Authorized domains: 
+Authorized domains:
 - localhost
 - your-domain.com
 
@@ -302,10 +302,10 @@ Check in `pubspec.yaml`:
 dependencies:
   # Firebase Core
   firebase_core: ^4.3.0
-  
+
   # Firestore
   cloud_firestore: ^6.1.1
-  
+
   # Authentication
   google_sign_in: 7.2.0
   sign_in_with_apple: 7.0.1
@@ -323,12 +323,12 @@ class FirebaseConfig {
     await Firebase.initializeApp(
       options: _getFirebaseOptions(),
     );
-    
+
     if (kDebugMode) {
       print('✅ Firebase initialized successfully');
     }
   }
-  
+
   static FirebaseOptions _getFirebaseOptions() {
     if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
@@ -348,7 +348,7 @@ class FirebaseConfig {
         storageBucket: 'xo-clash.firebasestorage.app',
       );
     }
-    
+
     throw UnsupportedError('Platform not supported');
   }
 }
@@ -359,105 +359,25 @@ class FirebaseConfig {
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // 1. Initialize Firebase
   await FirebaseConfig.initialize();
-  
-  // 2. Initialize GetIt
-  await configureDependencies();
-  
-  // 3. Launch app
+
+  // 2. Launch app with Riverpod
   runApp(const ProviderScope(child: App()));
 }
 ```
 
 ### 4.4 Authentication Service
 
-Create `lib/core/services/firebase_auth_service.dart`:
+The project uses `FirebaseAuthBackendService` in `lib/features/auth/data/services/firebase_auth_backend_service.dart`.
+
+It's registered as a Riverpod provider in `lib/core/providers/service_providers.dart`:
+
 ```dart
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:injectable/injectable.dart';
-
-abstract class AuthService {
-  Future<UserCredential> signInAnonymously();
-  Future<UserCredential> signInWithGoogle();
-  Future<UserCredential> signInWithApple();
-  Future<UserCredential> signInWithEmailPassword(String email, String password);
-  Future<void> signOut();
-  User? get currentUser;
-  Stream<User?> authStateChanges();
-}
-
-@Injectable(as: AuthService)
-class FirebaseAuthService implements AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  
-  @override
-  Future<UserCredential> signInAnonymously() async {
-    return await _auth.signInAnonymously();
-  }
-  
-  @override
-  Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) throw Exception('Google Sign-In cancelled');
-    
-    final GoogleSignInAuthentication googleAuth = 
-        await googleUser.authentication;
-    
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    
-    return await _auth.signInWithCredential(credential);
-  }
-  
-  @override
-  Future<UserCredential> signInWithApple() async {
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-    );
-    
-    final oAuthCredential = OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
-      accessToken: appleCredential.authorizationCode,
-    );
-    
-    return await _auth.signInWithCredential(oAuthCredential);
-  }
-  
-  @override
-  Future<UserCredential> signInWithEmailPassword(
-    String email, 
-    String password,
-  ) async {
-    return await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-  }
-  
-  @override
-  Future<void> signOut() async {
-    await Future.wait([
-      _auth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
-  }
-  
-  @override
-  User? get currentUser => _auth.currentUser;
-  
-  @override
-  Stream<User?> authStateChanges() => _auth.authStateChanges();
-}
+final authBackendServiceProvider = Provider<AuthBackendService>(
+  (ref) => FirebaseAuthBackendService(null, null, ref.watch(loggerServiceProvider)),
+);
 ```
 
 ---
@@ -492,10 +412,10 @@ print('✅ Firestore test: ${doc.data()}');
 final userCredential = await FirebaseAuth.instance.signInAnonymously();
 print('✅ Anonymous: ${userCredential.user?.uid}');
 
-// Test Google
-final authService = getIt<AuthService>();
+// Test Google (via Riverpod)
+final authService = container.read(authBackendServiceProvider);
 final googleUser = await authService.signInWithGoogle();
-print('✅ Google: ${googleUser.user?.displayName}');
+print('✅ Google: ${googleUser.displayName}');
 ```
 
 ### 5.3 Console Verification
@@ -524,8 +444,8 @@ print('✅ Google: ${googleUser.user?.displayName}');
 
 ### Flutter
 - [x] `firebase_core` initialized in `main.dart`
-- [x] `FirebaseAuthService` created and injectable
-- [x] `FirebaseGameBackendService` already created ✅
+- [x] `FirebaseAuthBackendService` created with Riverpod provider
+- [x] `FirebaseGameBackendService` created with Riverpod provider
 - [x] Connection tests performed
 
 ### Production

@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/features/user/domain/entities/user.dart';
@@ -10,7 +9,6 @@ abstract class UserDataSource {
   Future<void> deleteUser();
 }
 
-@Injectable(as: UserDataSource)
 class UserDataSourceImpl implements UserDataSource {
   static const String _usernameKey = AppConstants.storageKeyUsername;
   static const String _emailKey = AppConstants.storageKeyEmail;
@@ -59,4 +57,3 @@ class UserDataSourceImpl implements UserDataSource {
     await prefs.remove(_avatarKey);
   }
 }
-

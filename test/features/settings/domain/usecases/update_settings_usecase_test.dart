@@ -4,18 +4,12 @@ import 'package:tictac/features/settings/domain/entities/settings.dart';
 import 'package:tictac/features/settings/domain/repositories/settings_repository.dart';
 import 'package:tictac/features/settings/domain/usecases/update_settings_usecase.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 class MockSettingsRepository extends Mock implements SettingsRepository {}
 
 void main() {
   setUpAll(() {
     registerFallbackValue(const Settings());
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
 
   late MockSettingsRepository mockRepository;

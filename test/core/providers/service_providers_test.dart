@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tictac/core/di/injection.dart';
 import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/app_info_service.dart';
 import 'package:tictac/core/services/logger_service.dart';
@@ -8,7 +7,6 @@ import 'package:tictac/core/services/logger_service.dart';
 void main() {
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
-    configureDependencies();
   });
 
   group('Service Providers', () {
@@ -25,7 +23,7 @@ void main() {
     group('audioServiceProvider', () {});
 
     group('loggerServiceProvider', () {
-      test('should provide LoggerService instance from GetIt', () {
+      test('should provide LoggerService instance', () {
         final LoggerService loggerService = container.read(loggerServiceProvider);
 
         expect(loggerService, isA<LoggerService>());
@@ -41,7 +39,7 @@ void main() {
     });
 
     group('appInfoServiceProvider', () {
-      test('should provide AppInfoService instance from GetIt', () {
+      test('should provide AppInfoService instance', () {
         final AppInfoService appInfoService = container.read(appInfoServiceProvider);
 
         expect(appInfoService, isA<AppInfoService>());
