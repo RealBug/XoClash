@@ -18,6 +18,7 @@ import 'package:tictac/features/game/domain/usecases/join_game_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/make_computer_move_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/make_move_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/validate_game_id_usecase.dart';
+import 'package:tictac/features/game/presentation/entities/join_game_ui_state.dart';
 import 'package:tictac/features/history/domain/usecases/create_game_history_usecase.dart';
 import 'package:tictac/features/history/presentation/providers/history_providers.dart';
 import 'package:tictac/features/score/domain/usecases/calculate_score_update_usecase.dart';
@@ -262,16 +263,6 @@ class GameStateNotifier extends Notifier<GameState> {
   }
 }
 
-class JoinGameUIState {
-  const JoinGameUIState({this.isLoading = false, this.error});
-  final bool isLoading;
-  final String? error;
-
-  JoinGameUIState copyWith({bool? isLoading, String? Function()? error}) {
-    return JoinGameUIState(isLoading: isLoading ?? this.isLoading, error: error != null ? error() : this.error);
-  }
-}
-
 final NotifierProvider<JoinGameUINotifier, JoinGameUIState> joinGameUIStateProvider = NotifierProvider<JoinGameUINotifier, JoinGameUIState>(
   JoinGameUINotifier.new,
 );
@@ -283,16 +274,16 @@ class JoinGameUINotifier extends Notifier<JoinGameUIState> {
   }
 
   Future<void> joinGame(String gameId) async {
-    state = state.copyWith(isLoading: true, error: () => null);
+    state = state.copyWith(isLoading: true, error: null);
     try {
       await ref.read(gameStateProvider.notifier).joinGame(gameId);
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: () => e.toString());
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   void clearError() {
-    state = state.copyWith(error: () => null);
+    state = state.copyWith(error: null);
   }
 }

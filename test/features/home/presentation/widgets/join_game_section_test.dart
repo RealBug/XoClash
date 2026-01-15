@@ -7,6 +7,7 @@ import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
+import 'package:tictac/features/game/presentation/entities/join_game_ui_state.dart';
 import 'package:tictac/features/game/presentation/providers/game_providers.dart';
 import 'package:tictac/features/home/presentation/widgets/join_game_section.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
@@ -43,7 +44,7 @@ class FakeJoinGameUINotifier extends JoinGameUINotifier {
 
   @override
   void clearError() {
-    _initialState = _initialState.copyWith(error: () => null);
+    _initialState = _initialState.copyWith(error: null);
     state = _initialState;
   }
 }

@@ -6,8 +6,3 @@ class LoggerConstants {
   static const int methodCount = 0;
   static const int errorMethodCount = 5;
 }
-
-
-
-
-
