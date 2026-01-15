@@ -4,9 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
 import 'package:tictac/core/widgets/formatters/username_formatter.dart';
 import 'package:tictac/core/widgets/snackbars/error_snackbar.dart';
@@ -60,7 +58,7 @@ class _EmailSignupDialogState extends ConsumerState<EmailSignupDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         if (context.mounted) {
-          RouterHelper.popAllAndPush(context, const AvatarSelectionRoute());
+          ref.read(navigationServiceProvider).popAllAndNavigateToAvatarSelection();
         }
       }
     } catch (e, stackTrace) {

@@ -6,10 +6,9 @@ import 'package:gap/gap.dart';
 
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
@@ -38,10 +37,7 @@ class _BoardSizeScreenState extends ConsumerState<BoardSizeScreen> {
     if (widget.gameMode == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          while (context.router.canPop()) {
-            context.router.pop();
-          }
-          context.router.push(const HomeRoute());
+          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
         }
       });
     }
@@ -79,10 +75,11 @@ class _BoardSizeScreenState extends ConsumerState<BoardSizeScreen> {
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
-            if (context.router.canPop()) {
-              context.router.pop();
+            final navigation = ref.read(navigationServiceProvider);
+            if (navigation.canPop()) {
+              navigation.pop();
             } else {
-              RouterHelper.navigateToHome(context);
+              navigation.popAllAndNavigateToHome();
             }
           },
         ),

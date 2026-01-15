@@ -3,24 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show appRouterProvider;
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/features/settings/presentation/providers/settings_providers.dart'
     show isDarkModeProvider, languageCodeProvider;
 import 'package:tictac/l10n/app_localizations.dart';
 
-class TicTacApp extends ConsumerStatefulWidget {
+class TicTacApp extends ConsumerWidget {
   const TicTacApp({super.key});
 
   @override
-  ConsumerState<TicTacApp> createState() => _TicTacAppState();
-}
-
-class _TicTacAppState extends ConsumerState<TicTacApp> {
-  final AppRouter _appRouter = AppRouter();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appRouter = ref.watch(appRouterProvider);
     try {
       final isDarkMode = ref.watch(isDarkModeProvider);
       final languageCode = ref.watch(languageCodeProvider);
@@ -56,7 +50,7 @@ class _TicTacAppState extends ConsumerState<TicTacApp> {
           Locale('fr'),
         ],
         locale: Locale(languageCode),
-        routerConfig: _appRouter.config(),
+        routerConfig: appRouter.config(),
         builder: (BuildContext context, Widget? child) {
           return MediaQuery(
             data: MediaQuery.of(context)

@@ -3,10 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
 import 'package:tictac/core/widgets/inputs/username_text_field.dart';
 import 'package:tictac/core/widgets/snackbars/error_snackbar.dart';
@@ -54,7 +53,7 @@ class _GuestDialogState extends ConsumerState<GuestDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         if (context.mounted) {
-          RouterHelper.popAllAndPush(context, const HomeRoute());
+          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
         }
       }
     } catch (e) {

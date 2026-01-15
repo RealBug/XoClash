@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,6 @@ import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/color_extensions.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
@@ -191,7 +189,7 @@ class _JoinGameSectionState extends ConsumerState<JoinGameSection> {
 
     final joinGameState = ref.read(joinGameUIStateProvider);
     if (joinGameState.error == null) {
-      context.router.push(GameRoute());
+      ref.read(navigationServiceProvider).toGame();
     }
   }
 }

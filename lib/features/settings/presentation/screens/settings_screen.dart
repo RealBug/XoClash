@@ -5,11 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show audioServiceProvider;
+import 'package:tictac/core/providers/service_providers.dart' show audioServiceProvider, navigationServiceProvider;
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
 import 'package:tictac/core/widgets/ui/section_header.dart';
@@ -55,10 +54,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
-            if (context.router.canPop()) {
-              context.router.pop();
+            final navigation = ref.read(navigationServiceProvider);
+            if (navigation.canPop()) {
+              navigation.pop();
             } else {
-              RouterHelper.navigateToHome(context);
+              navigation.popAllAndNavigateToHome();
             }
           },
         ),

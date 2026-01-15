@@ -1,11 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
 import 'package:tictac/core/extensions/localizations_extension.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
@@ -83,7 +81,7 @@ class BoardSizeOption extends ConsumerWidget {
         if (!context.mounted) {
           return;
         }
-        context.router.replace(GameRoute(friendAvatar: friendAvatar));
+        ref.read(navigationServiceProvider).replaceWithGame(friendAvatar: friendAvatar);
       },
       child: Card(
         margin: EdgeInsets.zero,

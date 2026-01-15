@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
 import 'package:tictac/core/widgets/snackbars/error_snackbar.dart';
@@ -51,7 +51,7 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
       if (currentUser != null) {
         await ref.read(userProvider.notifier).saveUser(currentUser.username, email: currentUser.email, avatar: _selectedAvatar);
         if (mounted) {
-          RouterHelper.navigateToHome(context);
+          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
         }
       }
     } catch (e) {
@@ -77,10 +77,11 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
-            if (context.router.canPop()) {
-              context.router.pop();
+            final navigation = ref.read(navigationServiceProvider);
+            if (navigation.canPop()) {
+              navigation.pop();
             } else {
-              RouterHelper.navigateToHome(context);
+              navigation.popAllAndNavigateToHome();
             }
           },
         ),
@@ -143,9 +144,7 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
                         TextButton(
                           onPressed: _isLoading
                               ? null
-                              : () {
-                                  RouterHelper.navigateToHome(context);
-                                },
+                              : () => ref.read(navigationServiceProvider).popAllAndNavigateToHome(),
                           child: Text(
                             context.l10n.skip,
                             style: Theme.of(

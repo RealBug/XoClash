@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/features/splash/presentation/screens/splash_screen.dart';
 import 'package:tictac/features/user/domain/entities/user.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
@@ -32,11 +32,12 @@ class _SplashRouteWrapperState extends ConsumerState<SplashRouteWrapper> {
     _hasNavigated = true;
 
     final User? user = userAsync.value;
+    final navigation = ref.read(navigationServiceProvider);
 
     if (user != null) {
-      context.router.push(const HomeRoute());
+      navigation.toHome();
     } else {
-      context.router.push(const AuthRoute());
+      navigation.toAuth();
     }
   }
 

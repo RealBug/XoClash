@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
 import 'package:tictac/core/widgets/snackbars/success_snackbar.dart';
@@ -65,10 +65,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> with Single
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
-            if (context.router.canPop()) {
-              context.router.pop();
+            final navigation = ref.read(navigationServiceProvider);
+            if (navigation.canPop()) {
+              navigation.pop();
             } else {
-              RouterHelper.navigateToHome(context);
+              navigation.popAllAndNavigateToHome();
             }
           },
         ),

@@ -1,11 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
 
-class PlaybookTile extends StatelessWidget {
+class PlaybookTile extends ConsumerWidget {
 
   const PlaybookTile({
     super.key,
@@ -14,7 +14,7 @@ class PlaybookTile extends StatelessWidget {
   final Settings settings;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -46,9 +46,7 @@ class PlaybookTile extends StatelessWidget {
               ? AppTheme.darkTextPrimary.withValues(alpha: 0.7)
               : AppTheme.lightTextSecondary,
         ),
-        onTap: () {
-          context.router.push(const PlaybookRoute());
-        },
+        onTap: () => ref.read(navigationServiceProvider).toPlaybook(),
       ),
     );
   }

@@ -6,12 +6,10 @@ import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
 import 'package:tictac/core/providers/service_providers.dart'
-    show audioServiceProvider;
-import 'package:tictac/core/routing/app_router.dart';
+    show audioServiceProvider, navigationServiceProvider;
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
 import 'package:tictac/core/widgets/effects/cosmic_background.dart';
@@ -96,10 +94,11 @@ class _GameModeScreenState extends ConsumerState<GameModeScreen> {
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
-            if (context.router.canPop()) {
-              context.router.pop();
+            final navigation = ref.read(navigationServiceProvider);
+            if (navigation.canPop()) {
+              navigation.pop();
             } else {
-              RouterHelper.navigateToHome(context);
+              navigation.popAllAndNavigateToHome();
             }
           },
         ),
@@ -334,16 +333,14 @@ class _GameModeScreenState extends ConsumerState<GameModeScreen> {
     final AudioService audioService = ref.read(audioServiceProvider);
     audioService.playMoveSound();
 
-    context.router.push(
-      BoardSizeRoute(
-        gameMode: _selectedMode!,
-        difficulty: _selectedDifficulty,
-        friendName: _selectedMode == GameModeType.offlineFriend
-            ? _friendNameController.text.trim()
-            : null,
-        friendAvatar:
-            _selectedMode == GameModeType.offlineFriend ? _friendAvatar : null,
-      ),
+    ref.read(navigationServiceProvider).toBoardSize(
+      gameMode: _selectedMode!,
+      difficulty: _selectedDifficulty,
+      friendName: _selectedMode == GameModeType.offlineFriend
+          ? _friendNameController.text.trim()
+          : null,
+      friendAvatar:
+          _selectedMode == GameModeType.offlineFriend ? _friendAvatar : null,
     );
   }
 

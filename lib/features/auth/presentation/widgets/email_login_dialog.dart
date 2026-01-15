@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
 import 'package:tictac/core/widgets/snackbars/error_snackbar.dart';
 import 'package:tictac/core/widgets/ui/modal_bottom_sheet.dart';
@@ -68,7 +66,7 @@ class _EmailLoginDialogState extends ConsumerState<EmailLoginDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         if (context.mounted) {
-          RouterHelper.popAllAndPush(context, const HomeRoute());
+          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
         }
       }
     } catch (e, stackTrace) {

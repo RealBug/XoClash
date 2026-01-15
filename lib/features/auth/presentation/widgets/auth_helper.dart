@@ -1,6 +1,4 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:tictac/core/utils/router_helper.dart';
 import 'package:tictac/core/widgets/snackbars/error_snackbar.dart';
 
 class AuthHelper {
@@ -9,14 +7,14 @@ class AuthHelper {
   static Future<void> handleSocialAuth({
     required BuildContext context,
     required Future<void> Function() authMethod,
-    required PageRouteInfo destination,
+    required VoidCallback onSuccess,
   }) async {
     try {
       await authMethod();
       if (!context.mounted) {
         return;
       }
-      RouterHelper.popAllAndPush(context, destination);
+      onSuccess();
     } catch (e) {
       if (!context.mounted) {
         return;

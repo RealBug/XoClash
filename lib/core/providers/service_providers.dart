@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/services/app_info_service.dart';
 import 'package:tictac/core/services/app_info_service_impl.dart';
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/services/audio_service_impl.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/core/services/logger_service_impl.dart';
+import 'package:tictac/core/services/navigation_service.dart';
+import 'package:tictac/core/services/navigation_service_impl.dart';
 import 'package:tictac/features/auth/data/datasources/auth_datasource.dart';
 import 'package:tictac/features/auth/data/services/auth_backend_service.dart';
 import 'package:tictac/features/auth/data/services/firebase_auth_backend_service.dart';
@@ -30,6 +33,15 @@ import 'package:tictac/features/user/domain/repositories/user_repository.dart';
 final Provider<LoggerService> loggerServiceProvider = Provider<LoggerService>(
   (Ref ref) => LoggerServiceImpl(),
 );
+
+final Provider<AppRouter> appRouterProvider = Provider<AppRouter>(
+  (Ref ref) => AppRouter(),
+);
+
+final Provider<NavigationService> navigationServiceProvider =
+    Provider<NavigationService>(
+      (Ref ref) => NavigationServiceImpl(ref.watch(appRouterProvider)),
+    );
 
 final Provider<AudioService> audioServiceProvider = Provider<AudioService>(
   (Ref ref) => AudioServiceImpl(ref.watch(loggerServiceProvider)),

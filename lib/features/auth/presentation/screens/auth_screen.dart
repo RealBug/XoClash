@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/branding/clickable_logo.dart';
@@ -59,9 +59,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ? AppTheme.darkTextPrimary
                   : AppTheme.lightTextSecondary,
             ),
-            onPressed: () {
-              context.router.push(SettingsRoute(hideProfile: true));
-            },
+            onPressed: () => ref.read(navigationServiceProvider).toSettings(hideProfile: true),
           ),
           Gap(AppSpacing.xs),
         ],
@@ -111,17 +109,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               Gap(AppSpacing.xl * 2),
                               GameButton(
                                 text: context.l10n.signup,
-                                onPressed: () {
-                                  context.router.push(const SignupRoute());
-                                },
+                                onPressed: () => ref.read(navigationServiceProvider).toSignup(),
                               ),
                               Gap(AppSpacing.sm),
                               GameButton(
                                 text: context.l10n.login,
                                 isOutlined: true,
-                                onPressed: () {
-                                  context.router.push(const LoginRoute());
-                                },
+                                onPressed: () => ref.read(navigationServiceProvider).toLogin(),
                               ),
                               Gap(AppSpacing.xl),
                               Row(

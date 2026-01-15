@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/routing/app_router.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/branding/clickable_logo.dart';
@@ -112,7 +112,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     authMethod: () => ref
                                         .read(userProvider.notifier)
                                         .signInWithGoogle(),
-                                    destination: const HomeRoute(),
+                                    onSuccess: () => ref.read(navigationServiceProvider).popAllAndNavigateToHome(),
                                   );
                                 },
                               ),
@@ -126,7 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     authMethod: () => ref
                                         .read(userProvider.notifier)
                                         .signInWithApple(),
-                                    destination: const HomeRoute(),
+                                    onSuccess: () => ref.read(navigationServiceProvider).popAllAndNavigateToHome(),
                                   );
                                 },
                               ),
