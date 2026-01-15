@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/features/history/domain/entities/game_history.dart';
@@ -11,7 +10,6 @@ abstract class HistoryDataSource {
   Future<void> clearHistory();
 }
 
-@Injectable(as: HistoryDataSource)
 class HistoryDataSourceImpl implements HistoryDataSource {
   static const String _historyKey = AppConstants.storageKeyHistory;
   static const int _maxHistorySize = AppConstants.maxHistorySize;

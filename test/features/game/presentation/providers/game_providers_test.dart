@@ -33,7 +33,6 @@ import 'package:tictac/features/user/domain/usecases/has_user_usecase.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
 import 'package:tictac/l10n/app_localizations_en.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 class MockCreateGameUseCase extends Mock implements CreateGameUseCase {}
 
@@ -106,11 +105,6 @@ void setUpAllFallbacks() {
 void main() {
   setUpAll(() {
     setUpAllFallbacks();
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
 
   late MockCreateGameUseCase mockCreateGameUseCase;
@@ -192,8 +186,7 @@ void main() {
             .overrideWithValue(mockUpdatePlayerScoreUseCase),
         calculateScoreUpdateUseCaseProvider
             .overrideWithValue(mockCalculateScoreUpdateUseCase),
-        score_providers.scoreRepositoryProvider
-            .overrideWithValue(mockScoreRepository),
+        scoreRepositoryProvider.overrideWithValue(mockScoreRepository),
         getUserUseCaseProvider.overrideWithValue(mockGetUserUseCase),
         hasUserUseCaseProvider.overrideWithValue(mockHasUserUseCase),
         deleteUserUseCaseProvider.overrideWithValue(mockDeleteUserUseCase),
@@ -266,7 +259,7 @@ void main() {
             .thenThrow(Exception('Failed to create'));
 
         final GameStateNotifier notifier = container.read(gameStateProvider.notifier);
-        
+
         try {
           await notifier.createGame();
         } catch (e) {
@@ -517,13 +510,13 @@ void main() {
             .thenReturn(computerMoveState);
 
         final GameStateNotifier notifier = container.read(gameStateProvider.notifier);
-        
+
         await notifier.createOfflineGame(
           boardSize: 3,
           mode: GameModeType.offlineComputer,
           difficulty: 1,
         );
-        
+
         await notifier.makeMove(0, 0);
 
         await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -579,13 +572,13 @@ void main() {
         });
 
         final GameStateNotifier notifier = container.read(gameStateProvider.notifier);
-        
+
         await notifier.createOfflineGame(
           boardSize: 3,
           mode: GameModeType.offlineComputer,
           difficulty: 1,
         );
-        
+
         await notifier.makeMove(0, 0);
 
         await Future<void>.delayed(const Duration(milliseconds: 100));

@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/game/data/services/game_backend_service.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
@@ -11,7 +10,6 @@ abstract class RemoteGameDataSource {
   Future<void> leaveGame(String gameId);
 }
 
-@Injectable(as: RemoteGameDataSource)
 class RemoteGameDataSourceImpl implements RemoteGameDataSource {
 
   RemoteGameDataSourceImpl(

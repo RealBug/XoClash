@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/history/domain/entities/game_history.dart';
 import 'package:tictac/features/history/domain/repositories/history_repository.dart';
@@ -8,7 +9,6 @@ import 'package:tictac/features/history/domain/usecases/get_game_history_usecase
 import 'package:tictac/features/history/domain/usecases/save_game_history_usecase.dart';
 import 'package:tictac/features/history/presentation/providers/history_providers.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 class MockGetGameHistoryUseCase extends Mock implements GetGameHistoryUseCase {}
 
@@ -33,11 +33,6 @@ void setUpAllFallbacks() {
 void main() {
   setUpAll(() {
     setUpAllFallbacks();
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
 
   late MockGetGameHistoryUseCase mockGetGameHistoryUseCase;

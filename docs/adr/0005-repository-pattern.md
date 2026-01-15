@@ -33,13 +33,21 @@ abstract class GameRepository {
 }
 
 // Data layer (depends on Domain)
-@Injectable(as: GameRepository)
 class GameRepositoryImpl implements GameRepository {
   final LocalGameDataSource localDataSource;
   final RemoteGameDataSource? remoteDataSource;
-  
+
   // Implementation details...
 }
+
+// Provider in service_providers.dart
+final gameRepositoryProvider = Provider<GameRepository>(
+  (ref) => GameRepositoryImpl(
+    localDataSource: ref.watch(localGameDataSourceProvider),
+    remoteDataSource: ref.watch(remoteGameDataSourceProvider),
+    logger: ref.watch(loggerServiceProvider),
+  ),
+);
 
 // Use case (depends on Domain interface)
 class MakeMoveUseCase {
@@ -63,4 +71,3 @@ class MakeMoveUseCase {
 ### Notes
 - Repositories coordinate between local and remote data sources
 - Use cases only know about repository interfaces
-

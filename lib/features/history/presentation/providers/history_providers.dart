@@ -1,19 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/di/injection.dart';
-import 'package:tictac/features/history/data/datasources/history_datasource.dart';
+import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/features/history/domain/entities/game_history.dart';
-import 'package:tictac/features/history/domain/repositories/history_repository.dart';
 import 'package:tictac/features/history/domain/usecases/clear_history_usecase.dart';
 import 'package:tictac/features/history/domain/usecases/get_game_history_usecase.dart';
 import 'package:tictac/features/history/domain/usecases/save_game_history_usecase.dart';
-
-final Provider<HistoryDataSource> historyDataSourceProvider = Provider<HistoryDataSource>(
-  (Ref ref) => getIt<HistoryDataSource>(),
-);
-
-final Provider<HistoryRepository> historyRepositoryProvider = Provider<HistoryRepository>(
-  (Ref ref) => getIt<HistoryRepository>(),
-);
 
 final Provider<SaveGameHistoryUseCase> saveGameHistoryUseCaseProvider = Provider<SaveGameHistoryUseCase>(
   (Ref ref) => SaveGameHistoryUseCase(ref.watch(historyRepositoryProvider)),
@@ -76,4 +66,3 @@ class GameHistoryNotifier extends AsyncNotifier<List<GameHistory>> {
     }
   }
 }
-

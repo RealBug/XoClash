@@ -1,13 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/di/injection.dart';
 import 'package:tictac/core/errors/error_handler.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/features/auth/data/datasources/auth_datasource.dart';
 import 'package:tictac/features/settings/domain/usecases/update_avatar_usecase.dart';
 import 'package:tictac/features/settings/domain/usecases/update_username_usecase.dart';
-import 'package:tictac/features/user/data/datasources/user_datasource.dart';
 import 'package:tictac/features/user/domain/entities/user.dart';
-import 'package:tictac/features/user/domain/repositories/user_repository.dart';
 import 'package:tictac/features/user/domain/usecases/create_user_usecase.dart';
 import 'package:tictac/features/user/domain/usecases/delete_user_usecase.dart';
 import 'package:tictac/features/user/domain/usecases/get_user_usecase.dart';
@@ -16,18 +12,11 @@ import 'package:tictac/features/user/domain/usecases/sign_in_as_guest_usecase.da
 import 'package:tictac/features/user/domain/usecases/sign_in_with_apple_usecase.dart';
 import 'package:tictac/features/user/domain/usecases/sign_in_with_google_usecase.dart';
 
-final Provider<UserDataSource> userDataSourceProvider = Provider<UserDataSource>((Ref ref) => getIt<UserDataSource>());
-
-final Provider<UserRepository> userRepositoryProvider = Provider<UserRepository>((Ref ref) => getIt<UserRepository>());
-
 final Provider<GetUserUseCase> getUserUseCaseProvider = Provider<GetUserUseCase>((Ref ref) => GetUserUseCase(ref.watch(userRepositoryProvider)));
-
 
 final Provider<HasUserUseCase> hasUserUseCaseProvider = Provider<HasUserUseCase>((Ref ref) => HasUserUseCase(ref.watch(userRepositoryProvider)));
 
 final Provider<DeleteUserUseCase> deleteUserUseCaseProvider = Provider<DeleteUserUseCase>((Ref ref) => DeleteUserUseCase(ref.watch(userRepositoryProvider)));
-
-final Provider<AuthDataSource> authDataSourceProvider = Provider<AuthDataSource>((Ref ref) => getIt<AuthDataSource>());
 
 final Provider<SignInWithGoogleUseCase> signInWithGoogleUseCaseProvider = Provider<SignInWithGoogleUseCase>(
   (Ref ref) => SignInWithGoogleUseCase(authDataSource: ref.watch(authDataSourceProvider), userRepository: ref.watch(userRepositoryProvider)),

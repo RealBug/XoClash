@@ -2,17 +2,15 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:injectable/injectable.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/auth/data/services/auth_backend_service.dart';
 
-@Injectable(as: AuthBackendService)
 class FirebaseAuthBackendService implements AuthBackendService {
 
   FirebaseAuthBackendService(
-    @factoryParam firebase_auth.FirebaseAuth? auth,
-    @factoryParam GoogleSignIn? googleSignIn,
+    firebase_auth.FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
     this._logger,
   )   : _authParam = auth,
         _googleSignInParam = googleSignIn;

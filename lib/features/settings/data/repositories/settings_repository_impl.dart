@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:injectable/injectable.dart';
 import 'package:tictac/features/settings/data/datasources/settings_datasource.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
 import 'package:tictac/features/settings/domain/repositories/settings_repository.dart';
 
-@Injectable(as: SettingsRepository)
 class SettingsRepositoryImpl implements SettingsRepository {
 
   SettingsRepositoryImpl({required this.dataSource}) {
@@ -41,22 +39,3 @@ class SettingsRepositoryImpl implements SettingsRepository {
     _settingsController.close();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

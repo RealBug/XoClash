@@ -21,10 +21,8 @@ dependencies:
     sdk: flutter
   freezed_annotation: 3.1.0
   gap: 3.0.1
-  get_it: 9.2.0
   google_fonts: 6.3.3
   google_sign_in: 7.2.0
-  injectable: 2.7.1
   intl: 0.20.2
   json_annotation: 4.9.0
   logger: 2.6.2
@@ -44,7 +42,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   freezed: 3.2.3
-  injectable_generator: 2.9.1
   json_serializable: 6.11.2
   mocktail: 1.0.4
   riverpod_generator: 3.0.3
@@ -52,7 +49,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
-  
+
   assets:
     - assets/app_icon.png
 
@@ -74,4 +71,3 @@ flutter_native_splash:
     color: "#0F0A1F"
   fullscreen: false
   color_dark: "#0F0A1F"
-

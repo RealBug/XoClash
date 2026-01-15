@@ -9,27 +9,19 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tictac/core/app.dart';
 import 'package:tictac/core/constants/game_constants.dart';
-import 'package:tictac/core/di/injection.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/core/services/logger_service_impl.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 
-final LoggerService _earlyLogger = LoggerServiceImpl();
-
-LoggerService _logger() {
-  if (getIt.isRegistered<LoggerService>()) {
-    return getIt<LoggerService>();
-  }
-  return _earlyLogger;
-}
+final LoggerService _logger = LoggerServiceImpl();
 
 void main() async {
   if (kIsWeb) {
     try {
       usePathUrlStrategy();
     } catch (e) {
-      _logger().warning('Could not set path URL strategy: $e');
+      _logger.warning('Could not set path URL strategy: $e');
     }
   }
 
@@ -38,7 +30,7 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     if (kIsWeb) {
-      _logger().error('Flutter Error', details.exception, details.stack);
+      _logger.error('Flutter Error', details.exception, details.stack);
     }
   };
 
@@ -72,7 +64,7 @@ void main() async {
   };
 
   PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    _logger().error('Platform Error', error, stack);
+    _logger.error('Platform Error', error, stack);
     return true;
   };
 
@@ -81,50 +73,27 @@ void main() async {
   // See docs/FIREBASE_SETUP.md for complete guide
   try {
     await Firebase.initializeApp();
-    _logger().info('Firebase initialized successfully');
+    _logger.info('Firebase initialized successfully');
   } catch (e) {
-    _logger()
-        .warning('Firebase not initialized - only offline modes available: $e');
-    // This is OK - offline modes (Local Friend, Computer) will still work
+    _logger.warning('Firebase not initialized - only offline modes available: $e');
   }
 
-  try {
-    configureDependencies();
-  } catch (e, stackTrace) {
-    _logger().error('Error configuring dependencies', e, stackTrace);
-    if (kIsWeb) {
-      runApp(
-        const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: Scaffold(
-            body: Center(
-              child: Text('Error initializing app. Please check console.'),
-            ),
-          ),
-        ),
-      );
-      return;
-    }
-    rethrow;
-  }
-
-  final LoggerService logger = getIt<LoggerService>();
-  logger.info('Application starting');
+  _logger.info('Application starting');
 
   try {
     await GoogleFonts.pendingFonts().timeout(
       GameConstants.fontsLoadingTimeout,
       onTimeout: () {
-        logger.warning('Google Fonts loading timeout, using fallback fonts');
+        _logger.warning('Google Fonts loading timeout, using fallback fonts');
         return <void>[];
       },
     );
-    logger.debug('Google Fonts loaded successfully');
+    _logger.debug('Google Fonts loaded successfully');
   } catch (e, stackTrace) {
-    logger.error('Could not load Google Fonts', e, stackTrace);
+    _logger.error('Could not load Google Fonts', e, stackTrace);
   }
 
-  logger.info('Initializing app');
+  _logger.info('Initializing app');
   runApp(
     const ProviderScope(
       child: TicTacApp(),

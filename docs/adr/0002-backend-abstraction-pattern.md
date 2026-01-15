@@ -25,10 +25,14 @@ abstract class AuthBackendService {
   // ...
 }
 
-@Injectable(as: AuthBackendService)
 class FirebaseAuthBackendService implements AuthBackendService {
   // Firebase-specific implementation
 }
+
+// Provider in service_providers.dart
+final authBackendServiceProvider = Provider<AuthBackendService>(
+  (ref) => FirebaseAuthBackendService(null, null, ref.watch(loggerServiceProvider)),
+);
 ```
 
 ## Consequences
@@ -45,6 +49,5 @@ class FirebaseAuthBackendService implements AuthBackendService {
 
 ### Notes
 - Data sources depend on backend service interfaces
-- Backend services are injected via GetIt/Injectable
-- To switch backends: implement interface and update DI configuration
-
+- Backend services are provided via Riverpod providers
+- To switch backends: implement interface and update provider

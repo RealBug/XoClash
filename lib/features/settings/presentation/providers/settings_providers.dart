@@ -1,33 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tictac/core/di/injection.dart';
 import 'package:tictac/core/providers/service_providers.dart';
-import 'package:tictac/features/settings/data/datasources/settings_datasource.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
-import 'package:tictac/features/settings/domain/repositories/settings_repository.dart';
 import 'package:tictac/features/settings/domain/usecases/get_app_version_usecase.dart';
 import 'package:tictac/features/settings/domain/usecases/get_settings_usecase.dart';
 import 'package:tictac/features/settings/domain/usecases/update_settings_usecase.dart';
 
-final Provider<SettingsDataSource> settingsDataSourceProvider = 
-    Provider<SettingsDataSource>((Ref ref) => getIt<SettingsDataSource>());
-
-final Provider<SettingsRepository> settingsRepositoryProvider = 
-    Provider<SettingsRepository>((Ref ref) => getIt<SettingsRepository>());
-
-final Provider<GetSettingsUseCase> getSettingsUseCaseProvider = 
+final Provider<GetSettingsUseCase> getSettingsUseCaseProvider =
     Provider<GetSettingsUseCase>((Ref ref) => GetSettingsUseCase(ref.watch(settingsRepositoryProvider)));
 
-final Provider<UpdateSettingsUseCase> updateSettingsUseCaseProvider = 
+final Provider<UpdateSettingsUseCase> updateSettingsUseCaseProvider =
     Provider<UpdateSettingsUseCase>((Ref ref) => UpdateSettingsUseCase(ref.watch(settingsRepositoryProvider)));
 
-final Provider<GetAppVersionUseCase> getAppVersionUseCaseProvider = 
+final Provider<GetAppVersionUseCase> getAppVersionUseCaseProvider =
     Provider<GetAppVersionUseCase>((Ref ref) => GetAppVersionUseCase(ref.watch(appInfoServiceProvider)));
 
 final FutureProvider<String> appVersionProvider = FutureProvider<String>((Ref ref) async {
   return await ref.read(getAppVersionUseCaseProvider).execute();
 });
 
-final AsyncNotifierProvider<SettingsNotifier, Settings> settingsProvider = 
+final AsyncNotifierProvider<SettingsNotifier, Settings> settingsProvider =
     AsyncNotifierProvider<SettingsNotifier, Settings>(SettingsNotifier.new);
 
 final Provider<Settings> settingsValueProvider = Provider<Settings>((Ref ref) {
@@ -105,27 +96,27 @@ class SettingsNotifier extends AsyncNotifier<Settings> {
     state = AsyncData(settings);
   }
 
-  Future<void> setLanguage(String languageCode) => 
+  Future<void> setLanguage(String languageCode) =>
       _executeAndReload(() => _updateUseCase.setLanguage(languageCode));
 
-  Future<void> setXShape(String shape) => 
+  Future<void> setXShape(String shape) =>
       _executeAndReload(() => _updateUseCase.setXShape(shape));
 
-  Future<void> setOShape(String shape) => 
+  Future<void> setOShape(String shape) =>
       _executeAndReload(() => _updateUseCase.setOShape(shape));
 
-  Future<void> setXShapeAndClearEmoji(String shape) => 
+  Future<void> setXShapeAndClearEmoji(String shape) =>
       _executeAndReload(() => _updateUseCase.setXShapeAndClearEmoji(shape));
 
-  Future<void> setOShapeAndClearEmoji(String shape) => 
+  Future<void> setOShapeAndClearEmoji(String shape) =>
       _executeAndReload(() => _updateUseCase.setOShapeAndClearEmoji(shape));
 
-  Future<void> setXEmoji(String? emoji) => 
+  Future<void> setXEmoji(String? emoji) =>
       _executeAndReload(() => _updateUseCase.setXEmoji(emoji));
 
-  Future<void> setOEmoji(String? emoji) => 
+  Future<void> setOEmoji(String? emoji) =>
       _executeAndReload(() => _updateUseCase.setOEmoji(emoji));
 
-  Future<void> setUseEmojis(bool useEmojis) => 
+  Future<void> setUseEmojis(bool useEmojis) =>
       _executeAndReload(() => _updateUseCase.setUseEmojis(useEmojis));
 }

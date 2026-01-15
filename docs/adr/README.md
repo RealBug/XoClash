@@ -10,7 +10,7 @@ ADRs are documents that capture important architectural decisions along with the
 
 - [ADR-0001: Feature-First Clean Architecture](0001-feature-first-clean-architecture.md)
 - [ADR-0002: Backend Abstraction Pattern](0002-backend-abstraction-pattern.md)
-- [ADR-0003: Hybrid DI Strategy (GetIt + Riverpod)](0003-hybrid-di-strategy.md)
+- [ADR-0003: Pure Riverpod DI](0003-pure-riverpod-di.md)
 - [ADR-0004: Offline-First Approach](0004-offline-first-approach.md)
 - [ADR-0005: Repository Pattern](0005-repository-pattern.md)
 - [ADR-0006: Use Case Pattern](0006-use-case-pattern.md)
@@ -23,5 +23,3 @@ Each ADR follows this structure:
 - **Context**: The issue motivating this decision
 - **Decision**: The change we're proposing or have agreed to implement
 - **Consequences**: What becomes easier or more difficult because of this change
-
-

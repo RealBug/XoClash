@@ -1,11 +1,8 @@
-import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tictac/core/services/app_info_service.dart';
 import 'package:tictac/core/services/logger_service.dart';
 
-@LazySingleton(as: AppInfoService)
 class AppInfoServiceImpl implements AppInfoService {
-
   AppInfoServiceImpl(this._logger);
   final LoggerService _logger;
 

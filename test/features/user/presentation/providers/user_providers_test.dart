@@ -9,7 +9,6 @@ import 'package:tictac/features/user/domain/usecases/has_user_usecase.dart';
 import 'package:tictac/features/user/domain/usecases/sign_in_as_guest_usecase.dart';
 import 'package:tictac/features/user/presentation/providers/user_providers.dart';
 
-import '../../../../helpers/test_setup.dart';
 
 void setUpAllFallbacks() {
   registerFallbackValue(const User(username: 'fallback'));
@@ -29,11 +28,6 @@ class MockSignInAsGuestUseCase extends Mock implements SignInAsGuestUseCase {}
 void main() {
   setUpAll(() {
     setUpAllFallbacks();
-    setupTestGetIt();
-  });
-
-  tearDownAll(() {
-    tearDownTestGetIt();
   });
   late MockGetUserUseCase mockGetUserUseCase;
   late MockHasUserUseCase mockHasUserUseCase;
