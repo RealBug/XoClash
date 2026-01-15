@@ -5,8 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/providers/service_providers.dart'
-    show audioServiceProvider, navigationServiceProvider;
+    show audioServiceProvider, navigate;
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
@@ -93,14 +94,7 @@ class _GameModeScreenState extends ConsumerState<GameModeScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
-          onPressed: () {
-            final navigation = ref.read(navigationServiceProvider);
-            if (navigation.canPop()) {
-              navigation.pop();
-            } else {
-              navigation.popAllAndNavigateToHome();
-            }
-          },
+          onPressed: () => navigate(ref, RequestBack()),
         ),
         title: Text(context.l10n.newGame),
         elevation: 0,
@@ -333,14 +327,17 @@ class _GameModeScreenState extends ConsumerState<GameModeScreen> {
     final AudioService audioService = ref.read(audioServiceProvider);
     audioService.playMoveSound();
 
-    ref.read(navigationServiceProvider).toBoardSize(
-      gameMode: _selectedMode!,
-      difficulty: _selectedDifficulty,
-      friendName: _selectedMode == GameModeType.offlineFriend
-          ? _friendNameController.text.trim()
-          : null,
-      friendAvatar:
-          _selectedMode == GameModeType.offlineFriend ? _friendAvatar : null,
+    navigate(
+      ref,
+      GameModeSelected(
+        mode: _selectedMode!,
+        difficulty: _selectedDifficulty,
+        friendName: _selectedMode == GameModeType.offlineFriend
+            ? _friendNameController.text.trim()
+            : null,
+        friendAvatar:
+            _selectedMode == GameModeType.offlineFriend ? _friendAvatar : null,
+      ),
     );
   }
 

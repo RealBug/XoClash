@@ -6,6 +6,7 @@ import 'package:tictac/core/constants/app_constants.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/color_extensions.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
@@ -189,7 +190,7 @@ class _JoinGameSectionState extends ConsumerState<JoinGameSection> {
 
     final joinGameState = ref.read(joinGameUIStateProvider);
     if (joinGameState.error == null) {
-      ref.read(navigationServiceProvider).toGame();
+      navigate(ref, JoinGameCompleted());
     }
   }
 }

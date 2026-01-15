@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
@@ -81,7 +82,7 @@ class BoardSizeOption extends ConsumerWidget {
         if (!context.mounted) {
           return;
         }
-        ref.read(navigationServiceProvider).replaceWithGame(friendAvatar: friendAvatar);
+        navigate(ref, GameStarted(friendAvatar: friendAvatar));
       },
       child: Card(
         margin: EdgeInsets.zero,

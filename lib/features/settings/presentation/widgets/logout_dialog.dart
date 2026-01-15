@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/features/history/presentation/providers/history_providers.dart';
 import 'package:tictac/features/score/presentation/providers/score_providers.dart';
@@ -30,7 +31,7 @@ class LogoutDialog extends ConsumerWidget {
               ref.read(sessionScoresProvider.notifier).reset();
               await ref.read(userProvider.notifier).deleteUser();
               if (context.mounted) {
-                ref.read(navigationServiceProvider).popAllAndNavigateToAuth();
+                navigate(ref, LogoutCompleted());
               }
             },
             style: TextButton.styleFrom(
@@ -49,4 +50,3 @@ class LogoutDialog extends ConsumerWidget {
     return const SizedBox.shrink();
   }
 }
-

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/features/auth/presentation/widgets/auth_button.dart';
 import 'package:tictac/features/auth/presentation/widgets/auth_helper.dart';
 import 'package:tictac/l10n/app_localizations.dart';
@@ -67,7 +66,7 @@ void main() {
                           authMethod: () async {
                             authCompleted = true;
                           },
-                          destination: const HomeRoute(),
+                          onSuccess: () {},
                         );
                       },
                       child: const Text('Test'),
@@ -109,7 +108,7 @@ void main() {
                           authMethod: () async {
                             throw Exception('Authentication failed');
                           },
-                          destination: const HomeRoute(),
+                          onSuccess: () {},
                         );
                       },
                       child: const Text('Test'),

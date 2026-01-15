@@ -8,14 +8,11 @@ import 'package:tictac/features/game/domain/usecases/make_computer_move_usecase.
 import 'package:tictac/features/game/domain/usecases/select_ai_move_usecase.dart';
 
 class MockSelectAIMoveUseCase extends Mock implements SelectAIMoveUseCase {}
+
 class MockCheckWinnerUseCase extends Mock implements CheckWinnerUseCase {}
 
 void setUpAllFallbacks() {
-  registerFallbackValue(
-    GameState(
-      board: 3.createEmptyBoard(),
-    ),
-  );
+  registerFallbackValue(GameState(board: 3.createEmptyBoard()));
 }
 
 void main() {
@@ -54,15 +51,23 @@ void main() {
         status: GameStatus.playing,
       );
 
-      when(() => mockSelectAIMoveUseCase.execute(any(), any()))
-          .thenReturn(updatedState);
-      when(() => mockCheckWinnerUseCase.execute(any()))
-          .thenReturn(finalState);
+      when(
+        () => mockSelectAIMoveUseCase.execute(any(), any()),
+      ).thenReturn(updatedState);
+      when(() => mockCheckWinnerUseCase.execute(any())).thenReturn(finalState);
 
-      final GameState result = await useCase.execute(initialState, GameConstants.aiEasyDifficulty);
+      final GameState result = await useCase.execute(
+        initialState,
+        GameConstants.aiEasyDifficulty,
+      );
 
       expect(result, equals(finalState));
-      verify(() => mockSelectAIMoveUseCase.execute(initialState, GameConstants.aiEasyDifficulty)).called(1);
+      verify(
+        () => mockSelectAIMoveUseCase.execute(
+          initialState,
+          GameConstants.aiEasyDifficulty,
+        ),
+      ).called(1);
       verify(() => mockCheckWinnerUseCase.execute(updatedState)).called(1);
     });
 
@@ -72,7 +77,10 @@ void main() {
         status: GameStatus.xWon,
       );
 
-      final GameState result = await useCase.execute(gameOverState, GameConstants.aiEasyDifficulty);
+      final GameState result = await useCase.execute(
+        gameOverState,
+        GameConstants.aiEasyDifficulty,
+      );
 
       expect(result, equals(gameOverState));
       verifyNever(() => mockSelectAIMoveUseCase.execute(any(), any()));
@@ -96,15 +104,23 @@ void main() {
         status: GameStatus.draw,
       );
 
-      when(() => mockSelectAIMoveUseCase.execute(any(), any()))
-          .thenReturn(updatedState);
-      when(() => mockCheckWinnerUseCase.execute(any()))
-          .thenReturn(finalState);
+      when(
+        () => mockSelectAIMoveUseCase.execute(any(), any()),
+      ).thenReturn(updatedState);
+      when(() => mockCheckWinnerUseCase.execute(any())).thenReturn(finalState);
 
-      final GameState result = await useCase.execute(initialState, GameConstants.aiEasyDifficulty);
+      final GameState result = await useCase.execute(
+        initialState,
+        GameConstants.aiEasyDifficulty,
+      );
 
       expect(result.status, equals(GameStatus.draw));
-      verify(() => mockSelectAIMoveUseCase.execute(initialState, GameConstants.aiEasyDifficulty)).called(1);
+      verify(
+        () => mockSelectAIMoveUseCase.execute(
+          initialState,
+          GameConstants.aiEasyDifficulty,
+        ),
+      ).called(1);
       verify(() => mockCheckWinnerUseCase.execute(updatedState)).called(1);
     });
 
@@ -115,15 +131,52 @@ void main() {
         status: GameStatus.playing,
       );
 
-      when(() => mockSelectAIMoveUseCase.execute(any(), any()))
-          .thenThrow(Exception('AI move selection error'));
+      when(
+        () => mockSelectAIMoveUseCase.execute(any(), any()),
+      ).thenThrow(Exception('AI move selection error'));
 
       await expectLater(
         useCase.execute(initialState, GameConstants.aiEasyDifficulty),
         throwsException,
       );
-      verify(() => mockSelectAIMoveUseCase.execute(initialState, GameConstants.aiEasyDifficulty)).called(1);
+      verify(
+        () => mockSelectAIMoveUseCase.execute(
+          initialState,
+          GameConstants.aiEasyDifficulty,
+        ),
+      ).called(1);
       verifyNever(() => mockCheckWinnerUseCase.execute(any()));
+    });
+
+    test('should use default delay for unknown difficulty', () async {
+      final GameState initialState = GameState(
+        board: 3.createEmptyBoard(),
+        currentPlayer: Player.o,
+        status: GameStatus.playing,
+      );
+      final GameState updatedState = initialState.copyWith(
+        board: <List<Player>>[
+          <Player>[Player.x, Player.none, Player.none],
+          <Player>[Player.none, Player.o, Player.none],
+          <Player>[Player.none, Player.none, Player.none],
+        ],
+      );
+      final GameState finalState = updatedState.copyWith(
+        status: GameStatus.playing,
+      );
+
+      when(
+        () => mockSelectAIMoveUseCase.execute(any(), any()),
+      ).thenReturn(updatedState);
+      when(() => mockCheckWinnerUseCase.execute(any())).thenReturn(finalState);
+
+      final result = await useCase.execute(initialState, 999);
+
+      expect(result, equals(finalState));
+      verify(
+        () => mockSelectAIMoveUseCase.execute(initialState, 999),
+      ).called(1);
+      verify(() => mockCheckWinnerUseCase.execute(updatedState)).called(1);
     });
   });
 }

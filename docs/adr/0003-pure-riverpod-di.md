@@ -46,8 +46,29 @@ All infrastructure providers are defined in `lib/core/providers/service_provider
 - All DataSources
 - All Repositories
 - Backend services (Firebase)
+- Navigation services and coordinators
 
 Feature-specific providers import from this central file.
+
+### Use Case Providers
+
+Use cases are also provided via Riverpod. Dependencies are injected as required parameters:
+
+```dart
+// Use case with required dependencies
+final checkHasWinningMoveUseCaseProvider = Provider<CheckHasWinningMoveUseCase>(
+  (Ref ref) => CheckHasWinningMoveUseCase(
+    ref.watch(checkWinnerUseCaseProvider),
+  ),
+);
+
+// Use case that instantiates its own dependencies (when mocks not needed in tests)
+final checkCanForceDrawUseCaseProvider = Provider<CheckCanForceDrawUseCase>(
+  (Ref ref) => CheckCanForceDrawUseCase(),
+);
+```
+
+**Guideline**: Use required parameters for dependencies unless the use case explicitly needs to accept mocks in tests (e.g., `SelectAIMoveUseCase`, `MakeComputerMoveUseCase`).
 
 ## Consequences
 

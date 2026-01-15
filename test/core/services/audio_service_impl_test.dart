@@ -31,7 +31,6 @@ void main() {
       when(() => mockAudioPlayer.dispose()).thenAnswer((_) async {});
     });
 
-
     group('setFxEnabled', () {
       test('should enable sound effects', () {
         audioService.setFxEnabled(true);

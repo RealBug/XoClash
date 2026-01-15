@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tictac/core/navigation/flow_coordinator.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/routing/app_router.dart';
 import 'package:tictac/core/services/app_info_service.dart';
 import 'package:tictac/core/services/app_info_service_impl.dart';
@@ -42,6 +44,17 @@ final Provider<NavigationService> navigationServiceProvider =
     Provider<NavigationService>(
       (Ref ref) => NavigationServiceImpl(ref.watch(appRouterProvider)),
     );
+
+final Provider<FlowCoordinator> coordinatorProvider = Provider<FlowCoordinator>(
+  (Ref ref) => FlowCoordinator(
+    ref.read(navigationServiceProvider),
+    logger: ref.read(loggerServiceProvider),
+  ),
+);
+
+void navigate(WidgetRef ref, FlowEvent event) {
+  ref.read(coordinatorProvider).handle(event);
+}
 
 final Provider<AudioService> audioServiceProvider = Provider<AudioService>(
   (Ref ref) => AudioServiceImpl(ref.watch(loggerServiceProvider)),

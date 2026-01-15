@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/branding/clickable_logo.dart';
@@ -59,7 +60,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ? AppTheme.darkTextPrimary
                   : AppTheme.lightTextSecondary,
             ),
-            onPressed: () => ref.read(navigationServiceProvider).toSettings(hideProfile: true),
+            onPressed: () => navigate(ref, RequestSettings(hideProfile: true)),
           ),
           Gap(AppSpacing.xs),
         ],
@@ -109,13 +110,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               Gap(AppSpacing.xl * 2),
                               GameButton(
                                 text: context.l10n.signup,
-                                onPressed: () => ref.read(navigationServiceProvider).toSignup(),
+                                onPressed: () => navigate(ref, RequestSignup()),
                               ),
                               Gap(AppSpacing.sm),
                               GameButton(
                                 text: context.l10n.login,
                                 isOutlined: true,
-                                onPressed: () => ref.read(navigationServiceProvider).toLogin(),
+                                onPressed: () => navigate(ref, RequestLogin()),
                               ),
                               Gap(AppSpacing.xl),
                               Row(

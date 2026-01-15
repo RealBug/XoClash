@@ -7,14 +7,14 @@ import 'package:tictac/features/game/domain/usecases/get_available_moves_usecase
 
 class CheckCanForceDrawUseCase {
   CheckCanForceDrawUseCase({
-    CheckWinnerUseCase? checkWinnerUseCase,
-    CountRemainingMovesUseCase? countRemainingMovesUseCase,
-    GetAvailableMovesUseCase? getAvailableMovesUseCase,
-    CheckHasWinningMoveUseCase? checkHasWinningMoveUseCase,
-  })  : _checkWinnerUseCase = checkWinnerUseCase ?? CheckWinnerUseCase(),
-        _countRemainingMovesUseCase = countRemainingMovesUseCase ?? CountRemainingMovesUseCase(),
-        _getAvailableMovesUseCase = getAvailableMovesUseCase ?? GetAvailableMovesUseCase(),
-        _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase ?? CheckHasWinningMoveUseCase();
+    required CheckWinnerUseCase checkWinnerUseCase,
+    required CountRemainingMovesUseCase countRemainingMovesUseCase,
+    required GetAvailableMovesUseCase getAvailableMovesUseCase,
+    required CheckHasWinningMoveUseCase checkHasWinningMoveUseCase,
+  }) : _checkWinnerUseCase = checkWinnerUseCase,
+       _countRemainingMovesUseCase = countRemainingMovesUseCase,
+       _getAvailableMovesUseCase = getAvailableMovesUseCase,
+       _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase;
 
   final CheckWinnerUseCase _checkWinnerUseCase;
   final CountRemainingMovesUseCase _countRemainingMovesUseCase;
@@ -37,7 +37,11 @@ class CheckCanForceDrawUseCase {
         final testBoard = board.deepCopy();
         testBoard[move[0]][move[1]] = currentPlayer;
 
-        final testGameState = GameState(board: testBoard, currentPlayer: opponent, status: GameStatus.playing);
+        final testGameState = GameState(
+          board: testBoard,
+          currentPlayer: opponent,
+          status: GameStatus.playing,
+        );
         final result = _checkWinnerUseCase.execute(testGameState);
 
         if (result.status == GameStatus.xWon && currentPlayer == Player.x ||
@@ -50,7 +54,10 @@ class CheckCanForceDrawUseCase {
         }
 
         if (result.status == GameStatus.playing) {
-          final opponentCanWin = _checkHasWinningMoveUseCase.execute(testBoard, opponent);
+          final opponentCanWin = _checkHasWinningMoveUseCase.execute(
+            testBoard,
+            opponent,
+          );
           if (!opponentCanWin) {
             return true;
           }
@@ -61,4 +68,3 @@ class CheckCanForceDrawUseCase {
     return false;
   }
 }
-

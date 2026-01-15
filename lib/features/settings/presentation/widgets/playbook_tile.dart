@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/features/settings/domain/entities/settings.dart';
 
@@ -46,7 +47,7 @@ class PlaybookTile extends ConsumerWidget {
               ? AppTheme.darkTextPrimary.withValues(alpha: 0.7)
               : AppTheme.lightTextSecondary,
         ),
-        onTap: () => ref.read(navigationServiceProvider).toPlaybook(),
+        onTap: () => navigate(ref, RequestPlaybook()),
       ),
     );
   }

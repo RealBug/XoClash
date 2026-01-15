@@ -26,19 +26,19 @@ lib/features/{feature}/domain/usecases/
 ```dart
 class MakeMoveUseCase {
   final GameRepository repository;
-  
+
   MakeMoveUseCase(this.repository);
-  
+
   Future<GameState> execute(GameState gameState, int row, int col) async {
     // Business logic: validate move
     if (gameState.board[row][col] != Player.none) {
       return gameState;  // Invalid move
     }
-    
+
     if (gameState.isGameOver) {
       return gameState;  // Game already over
     }
-    
+
     // Delegate to repository
     return await repository.makeMove(gameState, row, col);
   }
@@ -63,6 +63,7 @@ class MakeMoveUseCase {
 - Use cases contain business rules and validation
 - Use cases delegate data operations to repositories
 - **Architecture Rule**: Providers MUST use use cases, NEVER call repositories directly
+- **Dependency Injection**: Use cases receive dependencies via Riverpod providers. Dependencies are required parameters (not nullable with defaults) unless explicitly needed for testing with mocks
 
 ### Examples
 
@@ -71,7 +72,7 @@ class MakeMoveUseCase {
 // UpdateUsernameUseCase - Preserves email and avatar
 class UpdateUsernameUseCase {
   final UserRepository _userRepository;
-  
+
   Future<User> execute(User? currentUser, String newUsername) async {
     final trimmedUsername = newUsername.trim();
     final updatedUser = User(
@@ -90,7 +91,7 @@ class UpdateUsernameUseCase {
 // SetLanguageUseCase - Encapsulates language change logic
 class SetLanguageUseCase {
   final SettingsRepository _repository;
-  
+
   Future<void> execute(String languageCode) async {
     final currentSettings = await _repository.getSettings();
     final updatedSettings = currentSettings.copyWith(languageCode: languageCode);
@@ -118,4 +119,3 @@ class UserNotifier extends AsyncNotifier<User?> {
   }
 }
 ```
-

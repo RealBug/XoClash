@@ -9,12 +9,12 @@ import 'package:tictac/features/game/domain/usecases/check_move_leads_to_draw_us
 
 class HardAIStrategy implements AIStrategy {
   HardAIStrategy({
+    required CheckHasWinningMoveUseCase checkHasWinningMoveUseCase,
+    required CheckMoveLeadsToDrawUseCase checkMoveLeadsToDrawUseCase,
     math.Random? random,
-    CheckHasWinningMoveUseCase? checkHasWinningMoveUseCase,
-    CheckMoveLeadsToDrawUseCase? checkMoveLeadsToDrawUseCase,
-  })  : _random = random ?? math.Random(),
-        _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase ?? CheckHasWinningMoveUseCase(),
-        _checkMoveLeadsToDrawUseCase = checkMoveLeadsToDrawUseCase ?? CheckMoveLeadsToDrawUseCase();
+  })  : _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase,
+        _checkMoveLeadsToDrawUseCase = checkMoveLeadsToDrawUseCase,
+        _random = random ?? math.Random();
 
   final math.Random _random;
   final CheckHasWinningMoveUseCase _checkHasWinningMoveUseCase;
@@ -54,7 +54,10 @@ class HardAIStrategy implements AIStrategy {
       return center;
     }
 
-    return MediumAIStrategy(random: _random).selectMove(gameState, availableMoves);
+    return MediumAIStrategy(
+      checkHasWinningMoveUseCase: _checkHasWinningMoveUseCase,
+      checkMoveLeadsToDrawUseCase: _checkMoveLeadsToDrawUseCase,
+      random: _random,
+    ).selectMove(gameState, availableMoves);
   }
 }
-

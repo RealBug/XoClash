@@ -7,14 +7,14 @@ import 'package:tictac/features/game/domain/usecases/count_remaining_moves_useca
 
 class CheckMoveLeadsToDrawUseCase {
   CheckMoveLeadsToDrawUseCase({
-    CheckWinnerUseCase? checkWinnerUseCase,
-    CountRemainingMovesUseCase? countRemainingMovesUseCase,
-    CheckCanForceDrawUseCase? checkCanForceDrawUseCase,
-    CheckHasWinningMoveUseCase? checkHasWinningMoveUseCase,
-  })  : _checkWinnerUseCase = checkWinnerUseCase ?? CheckWinnerUseCase(),
-        _countRemainingMovesUseCase = countRemainingMovesUseCase ?? CountRemainingMovesUseCase(),
-        _checkCanForceDrawUseCase = checkCanForceDrawUseCase ?? CheckCanForceDrawUseCase(),
-        _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase ?? CheckHasWinningMoveUseCase();
+    required CheckWinnerUseCase checkWinnerUseCase,
+    required CountRemainingMovesUseCase countRemainingMovesUseCase,
+    required CheckCanForceDrawUseCase checkCanForceDrawUseCase,
+    required CheckHasWinningMoveUseCase checkHasWinningMoveUseCase,
+  })  : _checkWinnerUseCase = checkWinnerUseCase,
+        _countRemainingMovesUseCase = countRemainingMovesUseCase,
+        _checkCanForceDrawUseCase = checkCanForceDrawUseCase,
+        _checkHasWinningMoveUseCase = checkHasWinningMoveUseCase;
 
   final CheckWinnerUseCase _checkWinnerUseCase;
   final CountRemainingMovesUseCase _countRemainingMovesUseCase;
@@ -50,4 +50,3 @@ class CheckMoveLeadsToDrawUseCase {
     return _checkCanForceDrawUseCase.execute(testGameState);
   }
 }
-

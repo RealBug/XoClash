@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show audioServiceProvider, navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show audioServiceProvider, navigate;
 import 'package:tictac/core/services/audio_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
@@ -53,14 +54,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
-          onPressed: () {
-            final navigation = ref.read(navigationServiceProvider);
-            if (navigation.canPop()) {
-              navigation.pop();
-            } else {
-              navigation.popAllAndNavigateToHome();
-            }
-          },
+          onPressed: () => navigate(ref, RequestBack()),
         ),
         title: Text(context.l10n.settings),
         elevation: 0,

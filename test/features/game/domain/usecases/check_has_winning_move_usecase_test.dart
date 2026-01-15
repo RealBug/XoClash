@@ -1,13 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/usecases/check_has_winning_move_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/check_winner_usecase.dart';
 
 void main() {
   group('CheckHasWinningMoveUseCase', () {
     late CheckHasWinningMoveUseCase useCase;
 
     setUp(() {
-      useCase = CheckHasWinningMoveUseCase();
+      useCase = CheckHasWinningMoveUseCase(CheckWinnerUseCase());
     });
 
     test('should return true when X has already won', () {
@@ -59,4 +60,3 @@ void main() {
     });
   });
 }
-

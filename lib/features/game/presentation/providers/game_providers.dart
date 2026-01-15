@@ -3,9 +3,14 @@ import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
+import 'package:tictac/features/game/domain/usecases/check_can_force_draw_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/check_has_winning_move_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/check_move_leads_to_draw_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/check_winner_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/count_remaining_moves_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/create_game_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/create_offline_game_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/get_available_moves_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/get_game_result_info_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/get_player_name_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/get_win_message_usecase.dart';
@@ -13,6 +18,7 @@ import 'package:tictac/features/game/domain/usecases/handle_game_completion_usec
 import 'package:tictac/features/game/domain/usecases/join_game_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/make_computer_move_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/make_move_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/select_ai_move_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/validate_game_id_usecase.dart';
 import 'package:tictac/features/game/presentation/entities/join_game_ui_state.dart';
 import 'package:tictac/features/history/domain/usecases/create_game_history_usecase.dart';
@@ -35,6 +41,36 @@ final Provider<MakeMoveUseCase> makeMoveUseCaseProvider = Provider<MakeMoveUseCa
 );
 
 final Provider<CheckWinnerUseCase> checkWinnerUseCaseProvider = Provider<CheckWinnerUseCase>((Ref ref) => CheckWinnerUseCase());
+
+final Provider<CountRemainingMovesUseCase> countRemainingMovesUseCaseProvider = Provider<CountRemainingMovesUseCase>(
+  (Ref ref) => CountRemainingMovesUseCase(),
+);
+
+final Provider<GetAvailableMovesUseCase> getAvailableMovesUseCaseProvider = Provider<GetAvailableMovesUseCase>(
+  (Ref ref) => GetAvailableMovesUseCase(),
+);
+
+final Provider<CheckHasWinningMoveUseCase> checkHasWinningMoveUseCaseProvider = Provider<CheckHasWinningMoveUseCase>(
+  (Ref ref) => CheckHasWinningMoveUseCase(ref.watch(checkWinnerUseCaseProvider)),
+);
+
+final Provider<CheckCanForceDrawUseCase> checkCanForceDrawUseCaseProvider = Provider<CheckCanForceDrawUseCase>(
+  (Ref ref) => CheckCanForceDrawUseCase(
+    checkWinnerUseCase: ref.watch(checkWinnerUseCaseProvider),
+    countRemainingMovesUseCase: ref.watch(countRemainingMovesUseCaseProvider),
+    getAvailableMovesUseCase: ref.watch(getAvailableMovesUseCaseProvider),
+    checkHasWinningMoveUseCase: ref.watch(checkHasWinningMoveUseCaseProvider),
+  ),
+);
+
+final Provider<CheckMoveLeadsToDrawUseCase> checkMoveLeadsToDrawUseCaseProvider = Provider<CheckMoveLeadsToDrawUseCase>(
+  (Ref ref) => CheckMoveLeadsToDrawUseCase(
+    checkWinnerUseCase: ref.watch(checkWinnerUseCaseProvider),
+    countRemainingMovesUseCase: ref.watch(countRemainingMovesUseCaseProvider),
+    checkCanForceDrawUseCase: ref.watch(checkCanForceDrawUseCaseProvider),
+    checkHasWinningMoveUseCase: ref.watch(checkHasWinningMoveUseCaseProvider),
+  ),
+);
 
 final Provider<GetGameResultInfoUseCase> getGameResultInfoUseCaseProvider = Provider<GetGameResultInfoUseCase>(
   (Ref ref) => GetGameResultInfoUseCase(),
@@ -63,8 +99,19 @@ final Provider<CreateOfflineGameUseCase> createOfflineGameUseCaseProvider = Prov
   (Ref ref) => CreateOfflineGameUseCase(),
 );
 
+final Provider<SelectAIMoveUseCase> selectAIMoveUseCaseProvider = Provider<SelectAIMoveUseCase>(
+  (Ref ref) => SelectAIMoveUseCase(
+    getAvailableMovesUseCase: ref.watch(getAvailableMovesUseCaseProvider),
+    checkHasWinningMoveUseCase: ref.watch(checkHasWinningMoveUseCaseProvider),
+    checkMoveLeadsToDrawUseCase: ref.watch(checkMoveLeadsToDrawUseCaseProvider),
+  ),
+);
+
 final Provider<MakeComputerMoveUseCase> makeComputerMoveUseCaseProvider = Provider<MakeComputerMoveUseCase>(
-  (Ref ref) => MakeComputerMoveUseCase(),
+  (Ref ref) => MakeComputerMoveUseCase(
+    selectAIMoveUseCase: ref.watch(selectAIMoveUseCaseProvider),
+    checkWinnerUseCase: ref.watch(checkWinnerUseCaseProvider),
+  ),
 );
 
 final Provider<ValidateGameIdUseCase> validateGameIdUseCaseProvider = Provider<ValidateGameIdUseCase>((Ref ref) => ValidateGameIdUseCase());

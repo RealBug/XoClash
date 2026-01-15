@@ -10,7 +10,11 @@ void main() {
     });
 
     test('error should not throw', () {
-      expect(() => loggerService.error('Test error'), returnsNormally);
+      expect(
+        () => loggerService.error('Test error'),
+        returnsNormally,
+      );
+      loggerService.error('Test error');
     });
 
     test('error with exception should not throw', () {
@@ -18,6 +22,7 @@ void main() {
         () => loggerService.error('Test error', Exception('Test'), StackTrace.current),
         returnsNormally,
       );
+      loggerService.error('Test error', Exception('Test'), StackTrace.current);
     });
 
     test('warning should not throw', () {

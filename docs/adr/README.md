@@ -15,6 +15,7 @@ ADRs are documents that capture important architectural decisions along with the
 - [ADR-0005: Repository Pattern](0005-repository-pattern.md)
 - [ADR-0006: Use Case Pattern](0006-use-case-pattern.md)
 - [ADR-0007: Immutable State with Freezed](0007-immutable-state-with-freezed.md)
+- [ADR-0008: Coordinator Navigation Pattern](0008-coordinator-navigation-pattern.md)
 
 ## Format
 

@@ -3,20 +3,35 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tictac/core/constants/game_constants.dart';
 import 'package:tictac/features/game/domain/entities/game_state.dart';
 import 'package:tictac/features/game/domain/entities/game_state_extensions.dart';
+import 'package:tictac/features/game/domain/usecases/check_has_winning_move_usecase.dart';
+import 'package:tictac/features/game/domain/usecases/check_move_leads_to_draw_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/get_available_moves_usecase.dart';
 import 'package:tictac/features/game/domain/usecases/select_ai_move_usecase.dart';
 
 class MockGetAvailableMovesUseCase extends Mock implements GetAvailableMovesUseCase {}
+class MockCheckHasWinningMoveUseCase extends Mock implements CheckHasWinningMoveUseCase {}
+class MockCheckMoveLeadsToDrawUseCase extends Mock implements CheckMoveLeadsToDrawUseCase {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(GameState(board: 3.createEmptyBoard()));
+    registerFallbackValue(Player.x);
+  });
+
   group('SelectAIMoveUseCase', () {
     late SelectAIMoveUseCase useCase;
     late MockGetAvailableMovesUseCase mockGetAvailableMovesUseCase;
+    late MockCheckHasWinningMoveUseCase mockCheckHasWinningMoveUseCase;
+    late MockCheckMoveLeadsToDrawUseCase mockCheckMoveLeadsToDrawUseCase;
 
     setUp(() {
       mockGetAvailableMovesUseCase = MockGetAvailableMovesUseCase();
+      mockCheckHasWinningMoveUseCase = MockCheckHasWinningMoveUseCase();
+      mockCheckMoveLeadsToDrawUseCase = MockCheckMoveLeadsToDrawUseCase();
       useCase = SelectAIMoveUseCase(
         getAvailableMovesUseCase: mockGetAvailableMovesUseCase,
+        checkHasWinningMoveUseCase: mockCheckHasWinningMoveUseCase,
+        checkMoveLeadsToDrawUseCase: mockCheckMoveLeadsToDrawUseCase,
       );
     });
 
@@ -68,6 +83,8 @@ void main() {
         <int>[1, 1],
       ];
       when(() => mockGetAvailableMovesUseCase.execute(any())).thenReturn(availableMoves);
+      when(() => mockCheckHasWinningMoveUseCase.execute(any(), any())).thenReturn(false);
+      when(() => mockCheckMoveLeadsToDrawUseCase.execute(any(), any())).thenReturn(false);
 
       final resultEasy = useCase.execute(gameState, GameConstants.aiEasyDifficulty);
       final resultMedium = useCase.execute(gameState, GameConstants.aiMediumDifficulty);
@@ -79,4 +96,3 @@ void main() {
     });
   });
 }
-

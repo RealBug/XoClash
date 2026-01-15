@@ -7,7 +7,7 @@ A modern, collaborative Tic Tac Toe game built with Flutter, featuring **Feature
 ![Flutter](https://img.shields.io/badge/Flutter-3.6+-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.6+-0175C2?logo=dart)
 ![License](https://img.shields.io/badge/License-Private-red)
-![Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 ## 📋 Table of Contents
 
@@ -96,7 +96,8 @@ This project follows **Clean Architecture** principles with a **Feature-First** 
 - **Backend Abstraction**: Data sources depend on abstract backend services (easily replaceable)
 - **Use Cases**: Business logic encapsulated in use cases (53 use cases, 100% coverage)
 - **Use Case Pattern Enforcement**: All providers use use cases exclusively - no direct repository calls
-- **Pure Riverpod DI**: Single unified dependency injection system
+- **Pure Riverpod DI**: Single unified dependency injection system (see [ADR-0003](docs/adr/0003-pure-riverpod-di.md))
+- **Coordinator Navigation**: Decoupled navigation using coordinator pattern (see [ADR-0008](docs/adr/0008-coordinator-navigation-pattern.md))
 - **State Management**: Riverpod for reactive state management
 - **Repository Pattern**: Abstract data access through repositories
 
@@ -155,6 +156,69 @@ setUp(() {
   );
 });
 ```
+
+### Navigation Strategy
+
+The project uses a **Coordinator Pattern** for navigation to decouple views from routing implementation (see [ADR-0008](docs/adr/0008-coordinator-navigation-pattern.md)).
+
+#### Architecture Overview
+
+Views emit `FlowEvent`s instead of calling navigation directly:
+
+```dart
+// View emits event
+class HomeScreen extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ElevatedButton(
+      onPressed: () {
+        navigate(ref, RequestNewGame());
+      },
+      child: Text('New Game'),
+    );
+  }
+}
+```
+
+The `FlowCoordinator` dispatches events to feature-specific coordinators:
+
+```dart
+// FlowCoordinator routes to appropriate coordinator
+class FlowCoordinator {
+  void handle(FlowEvent event) {
+    for (final coordinator in _coordinators) {
+      if (coordinator.canHandle(event)) {
+        coordinator.handle(event);
+        return;
+      }
+    }
+  }
+}
+```
+
+Each coordinator handles navigation for its feature:
+
+```dart
+// Feature coordinator handles navigation
+class HomeCoordinator extends BaseCoordinator {
+  @override
+  void handle(FlowEvent event) {
+    switch (event) {
+      case RequestNewGame():
+        navigation.toGameMode();
+      // ...
+    }
+  }
+}
+```
+
+#### Why This Approach?
+
+1. **Decoupling**: Views don't know about routing implementation
+2. **Testability**: Coordinators are easily testable in isolation
+3. **Maintainability**: Navigation logic centralized per feature
+4. **Scalability**: Easy to add new coordinators without modifying existing ones
+5. **No God Class**: Chain of Responsibility avoids large switch statements
 
 ## 🚀 Installation & Configuration
 
@@ -343,6 +407,16 @@ lib/
 │   │       ├── app_exception_localizations.dart
 │   │       └── error_extensions.dart
 │   ├── providers/                   # Shared providers
+│   ├── navigation/                   # Navigation coordination
+│   │   ├── coordinator.dart          # Base coordinator interface
+│   │   ├── flow_coordinator.dart     # Main flow coordinator
+│   │   ├── flow_events.dart          # Navigation events
+│   │   └── coordinators/             # Feature coordinators
+│   │       ├── auth_coordinator.dart
+│   │       ├── game_coordinator.dart
+│   │       ├── home_coordinator.dart
+│   │       ├── navigation_coordinator.dart
+│   │       └── onboarding_coordinator.dart
 │   ├── routing/                     # Routing configuration
 │   │   ├── app_router.dart
 │   │   ├── app_router.gr.dart        # Generated
@@ -350,20 +424,18 @@ lib/
 │   ├── services/                    # Shared services
 │   │   ├── app_info_service.dart
 │   │   ├── app_info_service_impl.dart
-│   │   ├── app_route.dart
 │   │   ├── audio_service.dart
 │   │   ├── audio_service_impl.dart
 │   │   ├── logger_service.dart
-│   │   └── logger_service_impl.dart
+│   │   ├── logger_service_impl.dart
+│   │   ├── navigation_service.dart
+│   │   └── navigation_service_impl.dart
 │   ├── theme/                       # App theming
 │   │   └── app_theme.dart
 │   ├── spacing/                      # Spacing system
 │   │   ├── app_spacing.dart
 │   │   └── README.md
 │   ├── utils/                        # Utility functions
-│   │   ├── route_adapter.dart
-│   │   ├── router_helper.dart
-│   │   ├── router_service_impl.dart
 │   │   └── system_ui_helper.dart
 │   └── widgets/                      # Shared widgets (organized by category)
 │       ├── ai/                       # AI-related widgets
@@ -580,7 +652,7 @@ test/
 
 ### Test Coverage
 
-The project maintains **92% code coverage** on core business logic (badge updated automatically via scripts).
+The project maintains **91% code coverage** on core business logic (badge updated automatically via scripts).
 
 **To update the coverage badge:**
 ```bash

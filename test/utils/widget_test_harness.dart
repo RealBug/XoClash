@@ -45,7 +45,12 @@ class FakeUserNotifier extends UserNotifier {
   Future<app_user.User?> build() async => _user;
 }
 
+bool _uiTestEnvironmentInitialized = false;
+
 Future<void> setUpUiTestEnvironment() async {
+  if (_uiTestEnvironmentInitialized) {
+    return;
+  }
   SharedPreferences.setMockInitialValues(<String, Object>{});
   PackageInfo.setMockInitialValues(
     appName: 'XO Clash',
@@ -54,6 +59,7 @@ Future<void> setUpUiTestEnvironment() async {
     buildNumber: '1',
     buildSignature: 'test',
   );
+  _uiTestEnvironmentInitialized = true;
 }
 
 Widget buildTestApp({

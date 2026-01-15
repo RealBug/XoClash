@@ -6,7 +6,8 @@ import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/game_constants.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/effects/confetti_widget.dart';
@@ -115,7 +116,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.settings, size: 26, color: isDarkMode ? AppTheme.darkTextPrimary : AppTheme.lightTextSecondary),
-            onPressed: () => ref.read(navigationServiceProvider).toSettings(),
+            onPressed: () => navigate(ref, RequestSettings()),
           ),
           Gap(AppSpacing.xs),
           TextButton.icon(

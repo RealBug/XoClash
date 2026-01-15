@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playbook_ui/playbook_ui.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/playbook/playbook_stories.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/theme/app_theme.dart';
 
 @RoutePage()
@@ -27,14 +28,7 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
           title: Text(context.l10n.componentLibrary),
           leading: IconButton(
             icon: Icon(Icons.adaptive.arrow_back),
-            onPressed: () {
-              final navigation = ref.read(navigationServiceProvider);
-              if (navigation.canPop()) {
-                navigation.pop();
-              } else {
-                navigation.popAllAndNavigateToHome();
-              }
-            },
+            onPressed: () => navigate(ref, RequestBack()),
           ),
         ),
         body: RepaintBoundary(

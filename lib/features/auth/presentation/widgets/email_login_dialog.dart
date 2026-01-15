@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
+import 'package:tictac/core/navigation/flow_events.dart';
 import 'package:tictac/core/providers/service_providers.dart';
 import 'package:tictac/core/services/logger_service.dart';
 import 'package:tictac/core/spacing/app_spacing.dart';
@@ -66,7 +67,7 @@ class _EmailLoginDialogState extends ConsumerState<EmailLoginDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         if (context.mounted) {
-          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
+          navigate(ref, LoginCompleted());
         }
       }
     } catch (e, stackTrace) {
@@ -155,4 +156,3 @@ class _EmailLoginDialogState extends ConsumerState<EmailLoginDialog> {
     );
   }
 }
-

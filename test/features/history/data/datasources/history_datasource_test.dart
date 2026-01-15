@@ -41,6 +41,26 @@ void main() {
       expect(result, isEmpty);
     });
 
+    test('should limit history when limit is provided', () async {
+      await dataSource.clearHistory();
+
+      for (int i = 0; i < 5; i++) {
+        final GameHistory history = GameHistory(
+          id: 'test-$i',
+          date: DateTime.now(),
+          playerXName: 'X',
+          playerOName: 'O',
+          result: GameStatus.xWon,
+          boardSize: 3,
+        );
+        await dataSource.saveGameHistory(history);
+      }
+
+      final List<GameHistory> result = await dataSource.getGameHistory(limit: 3);
+
+      expect(result.length, equals(3));
+    });
+
     test('should parse all GameStatus values correctly', () async {
       final List<GameStatus> statuses = <GameStatus>[
         GameStatus.xWon,

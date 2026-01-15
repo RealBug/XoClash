@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
@@ -51,7 +52,7 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
       if (currentUser != null) {
         await ref.read(userProvider.notifier).saveUser(currentUser.username, email: currentUser.email, avatar: _selectedAvatar);
         if (mounted) {
-          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
+          navigate(ref, AvatarSelectionCompleted());
         }
       }
     } catch (e) {
@@ -76,14 +77,7 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
-          onPressed: () {
-            final navigation = ref.read(navigationServiceProvider);
-            if (navigation.canPop()) {
-              navigation.pop();
-            } else {
-              navigation.popAllAndNavigateToHome();
-            }
-          },
+          onPressed: () => navigate(ref, RequestBack()),
         ),
         title: Text(context.l10n.chooseAvatar),
         elevation: 0,
@@ -144,7 +138,7 @@ class _AvatarSelectionScreenState extends ConsumerState<AvatarSelectionScreen> {
                         TextButton(
                           onPressed: _isLoading
                               ? null
-                              : () => ref.read(navigationServiceProvider).popAllAndNavigateToHome(),
+                              : () => navigate(ref, AvatarSelectionSkipped()),
                           child: Text(
                             context.l10n.skip,
                             style: Theme.of(

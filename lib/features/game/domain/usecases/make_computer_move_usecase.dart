@@ -5,10 +5,10 @@ import 'package:tictac/features/game/domain/usecases/select_ai_move_usecase.dart
 
 class MakeComputerMoveUseCase {
   MakeComputerMoveUseCase({
-    SelectAIMoveUseCase? selectAIMoveUseCase,
-    CheckWinnerUseCase? checkWinnerUseCase,
-  })  : _selectAIMoveUseCase = selectAIMoveUseCase ?? SelectAIMoveUseCase(),
-        _checkWinnerUseCase = checkWinnerUseCase ?? CheckWinnerUseCase();
+    required SelectAIMoveUseCase selectAIMoveUseCase,
+    required CheckWinnerUseCase checkWinnerUseCase,
+  })  : _selectAIMoveUseCase = selectAIMoveUseCase,
+        _checkWinnerUseCase = checkWinnerUseCase;
 
   final SelectAIMoveUseCase _selectAIMoveUseCase;
   final CheckWinnerUseCase _checkWinnerUseCase;

@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/extensions/localizations_extension.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/widgets/buttons/game_button.dart';
@@ -53,7 +54,7 @@ class _GuestDialogState extends ConsumerState<GuestDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         if (context.mounted) {
-          ref.read(navigationServiceProvider).popAllAndNavigateToHome();
+          navigate(ref, GuestLoginCompleted());
         }
       }
     } catch (e) {

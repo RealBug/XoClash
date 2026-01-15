@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:tictac/core/constants/ui_constants.dart';
-import 'package:tictac/core/providers/service_providers.dart' show navigationServiceProvider;
+import 'package:tictac/core/navigation/flow_events.dart';
+import 'package:tictac/core/providers/service_providers.dart' show navigate;
 import 'package:tictac/core/spacing/app_spacing.dart';
 import 'package:tictac/core/theme/app_theme.dart';
 import 'package:tictac/core/utils/system_ui_helper.dart';
@@ -63,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.settings, size: 26, color: isDarkMode ? AppTheme.darkTextPrimary : AppTheme.lightTextSecondary),
-            onPressed: () => ref.read(navigationServiceProvider).toSettings(),
+            onPressed: () => navigate(ref, RequestSettings()),
           ),
           Gap(AppSpacing.sm),
         ],
