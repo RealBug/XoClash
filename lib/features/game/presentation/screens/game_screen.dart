@@ -27,7 +27,6 @@ import 'package:tictac/features/user/presentation/providers/user_providers.dart'
 
 @RoutePage()
 class GameScreen extends ConsumerStatefulWidget {
-
   const GameScreen({super.key, this.friendAvatar});
   final String? friendAvatar;
 
@@ -57,12 +56,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         return;
       }
 
-      final resultData = GameResultHelper.buildGameResultData(
-        context,
-        ref,
-        gameState,
-        user?.username,
-      );
+      final resultData = GameResultHelper.buildGameResultData(context, ref, gameState, user?.username);
       GameResultSnackBar.show(context, resultData);
     });
   }
@@ -86,9 +80,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     final resultInfo = gameResultInfoUseCase.execute(gameState, user?.username);
     final shouldShowConfetti = resultInfo.shouldShowConfetti;
-    final confettiColor1 = gameState.status == GameStatus.xWon
-        ? AppTheme.getPrimaryColor(isDarkMode)
-        : const Color(0xFFFF6B35);
+    final confettiColor1 = gameState.status == GameStatus.xWon ? AppTheme.getPrimaryColor(isDarkMode) : const Color(0xFFFF6B35);
     final confettiColor2 = gameState.status == GameStatus.xWon
         ? AppTheme.getPrimaryColor(isDarkMode).withValues(alpha: 0.8)
         : const Color(0xFFFF8C42);
@@ -108,19 +100,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         backgroundColor: AppTheme.transparent,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppTheme.transparent,
-          statusBarIconBrightness:
-              isDarkMode ? Brightness.light : Brightness.dark,
+          statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
           statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              size: 26,
-              color: isDarkMode
-                  ? AppTheme.darkTextPrimary
-                  : AppTheme.lightTextSecondary,
-            ),
+            icon: Icon(Icons.settings, size: 26, color: isDarkMode ? AppTheme.darkTextPrimary : AppTheme.lightTextSecondary),
             onPressed: () {
               context.router.push(SettingsRoute());
             },
@@ -130,13 +115,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             onPressed: () {
               ref.read(gameStateProvider.notifier).resetGame();
             },
-            icon: Icon(Icons.refresh,
-                color: AppTheme.getPrimaryColor(isDarkMode)),
+            icon: Icon(Icons.refresh, color: AppTheme.getPrimaryColor(isDarkMode)),
             label: Text(
               context.l10n.reset,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.getPrimaryColor(isDarkMode),
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.getPrimaryColor(isDarkMode)),
             ),
           ),
           Gap(AppSpacing.xs),
@@ -153,76 +135,62 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     child: ScrollableSection(
                       controller: _scrollController,
                       child: LayoutBuilder(
-                          builder: (BuildContext context, BoxConstraints constraints) {
-                            return SizedBox(
-                              width: constraints.maxWidth,
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: UIConstants.widgetSizeMaxWidth,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(24),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Gap(AppSpacing.lg),
-                                        GameInfo(
-                                          gameState: gameState,
-                                          friendAvatar: widget.friendAvatar,
-                                          animationsEnabled: animationsEnabled,
-                                        ),
-                                        Gap(AppSpacing.xxxl),
-                                        GameBoard(
-                                          gameState: gameState,
-                                          isDarkMode: isDarkMode,
-                                          animationsEnabled: animationsEnabled,
-                                          xShape: gameBoardSettings.xShape,
-                                          oShape: gameBoardSettings.oShape,
-                                          xEmoji: gameBoardSettings.xEmoji,
-                                          oEmoji: gameBoardSettings.oEmoji,
-                                          useEmojis:
-                                              gameBoardSettings.useEmojis,
-                                          onCellTap: (int row, int col) async {
-                                            await ref
-                                                .read(
-                                                    gameStateProvider.notifier)
-                                                .makeMove(row, col);
-                                          },
-                                          onWinningLineAnimationComplete: () {
-                                            if (mounted &&
-                                                shouldShowConfetti &&
-                                                animationsEnabled) {
-                                              setState(() {
-                                                _shouldShowConfetti = true;
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        Gap(AppSpacing.xxxl),
-                                        if (gameState.gameId != null &&
-                                            gameState.isOnline)
-                                          GameIdCard(gameState: gameState),
-                                      ],
-                                    ),
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          return SizedBox(
+                            width: constraints.maxWidth,
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: UIConstants.widgetSizeMaxWidth),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Gap(AppSpacing.lg),
+                                      GameInfo(
+                                        gameState: gameState,
+                                        friendAvatar: widget.friendAvatar,
+                                        animationsEnabled: animationsEnabled,
+                                      ),
+                                      Gap(AppSpacing.xxxl),
+                                      GameBoard(
+                                        gameState: gameState,
+                                        isDarkMode: isDarkMode,
+                                        animationsEnabled: animationsEnabled,
+                                        xShape: gameBoardSettings.xShape,
+                                        oShape: gameBoardSettings.oShape,
+                                        xEmoji: gameBoardSettings.xEmoji,
+                                        oEmoji: gameBoardSettings.oEmoji,
+                                        useEmojis: gameBoardSettings.useEmojis,
+                                        onCellTap: (int row, int col) async {
+                                          await ref.read(gameStateProvider.notifier).makeMove(row, col);
+                                        },
+                                        onWinningLineAnimationComplete: () {
+                                          if (mounted && shouldShowConfetti && animationsEnabled) {
+                                            setState(() {
+                                              _shouldShowConfetti = true;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      Gap(AppSpacing.xxxl),
+                                      if (gameState.gameId != null && gameState.isOnline) GameIdCard(gameState: gameState),
+                                    ],
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
           if (animationsEnabled && shouldShowConfetti)
-            ConfettiWidget(
-              isActive: _shouldShowConfetti,
-              color1: confettiColor1,
-              color2: confettiColor2,
-            ),
+            ConfettiWidget(isActive: _shouldShowConfetti, color1: confettiColor1, color2: confettiColor2),
         ],
       ),
     );

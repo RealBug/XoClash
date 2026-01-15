@@ -483,6 +483,117 @@ void main() {
 
         verifyNever(() => mockMakeMoveUseCase.execute(any(), 1, 1));
       });
+
+      test('sets isComputerThinking to true when computer turn starts', () async {
+        final List<List<Player>> updatedBoard = 3.createEmptyBoard();
+        updatedBoard[0][0] = Player.x;
+        final GameState updatedState = GameState(
+          board: updatedBoard,
+          currentPlayer: Player.o,
+          status: GameStatus.playing,
+          gameMode: GameModeType.offlineComputer,
+          computerDifficulty: 1,
+        );
+
+        final List<List<Player>> computerBoard = [
+          [Player.x, Player.none, Player.none],
+          [Player.none, Player.o, Player.none],
+          [Player.none, Player.none, Player.none],
+        ];
+        final GameState computerMoveState = GameState(
+          board: computerBoard,
+          status: GameStatus.playing,
+          gameMode: GameModeType.offlineComputer,
+          computerDifficulty: 1,
+        );
+
+        when(() => mockMakeMoveUseCase.execute(any(), 0, 0))
+            .thenAnswer((_) async => updatedState);
+        when(() => mockCheckWinnerUseCase.execute(updatedState))
+            .thenReturn(updatedState);
+        when(() => mockMakeComputerMoveUseCase.execute(any(), 1))
+            .thenAnswer((_) async => computerMoveState);
+        when(() => mockCheckWinnerUseCase.execute(computerMoveState))
+            .thenReturn(computerMoveState);
+
+        final GameStateNotifier notifier = container.read(gameStateProvider.notifier);
+        
+        await notifier.createOfflineGame(
+          boardSize: 3,
+          mode: GameModeType.offlineComputer,
+          difficulty: 1,
+        );
+        
+        await notifier.makeMove(0, 0);
+
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+
+        final GameState finalState = container.read(gameStateProvider);
+        expect(finalState.isComputerThinking, isFalse);
+        verify(() => mockMakeComputerMoveUseCase.execute(any(), 1)).called(1);
+      });
+
+      test('sets isComputerThinking to false when game is over before computer move', () async {
+        final List<List<Player>> updatedBoard = 3.createEmptyBoard();
+        updatedBoard[0][0] = Player.x;
+        final GameState updatedState = GameState(
+          board: updatedBoard,
+          currentPlayer: Player.o,
+          status: GameStatus.xWon,
+          gameMode: GameModeType.offlineComputer,
+          computerDifficulty: 1,
+        );
+
+        when(() => mockMakeMoveUseCase.execute(any(), 0, 0))
+            .thenAnswer((_) async => updatedState);
+        when(() => mockCheckWinnerUseCase.execute(updatedState))
+            .thenReturn(updatedState);
+        when(() => mockGetGameResultInfoUseCase.execute(any(), any()))
+            .thenAnswer((Invocation invocation) {
+          return const GameResultInfo(
+            isCurrentPlayerWin: true,
+            isLocalFriendWin: false,
+            shouldShowConfetti: true,
+            winningPlayerName: 'PlayerX',
+          );
+        });
+        when(() => mockHandleGameCompletionUseCase.execute(any(), any()))
+            .thenAnswer((Invocation invocation) {
+          final GameState gameState = invocation.positionalArguments[0] as GameState;
+          return GameCompletionData(
+            history: GameHistory(
+              id: gameState.gameId ?? 'test-id',
+              date: DateTime.now(),
+              playerXName: gameState.playerXName,
+              playerOName: gameState.playerOName,
+              result: gameState.status,
+              gameMode: gameState.gameMode ?? GameModeType.offlineComputer,
+              boardSize: gameState.board.length,
+            ),
+            playerXName: gameState.playerXName,
+            playerOName: gameState.playerOName,
+            isXWin: gameState.status == GameStatus.xWon,
+            isOWin: gameState.status == GameStatus.oWon,
+            isDraw: gameState.status == GameStatus.draw,
+          );
+        });
+
+        final GameStateNotifier notifier = container.read(gameStateProvider.notifier);
+        
+        await notifier.createOfflineGame(
+          boardSize: 3,
+          mode: GameModeType.offlineComputer,
+          difficulty: 1,
+        );
+        
+        await notifier.makeMove(0, 0);
+
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+
+        final GameState finalState = container.read(gameStateProvider);
+        expect(finalState.isComputerThinking, isFalse);
+        verifyNever(() => mockMakeComputerMoveUseCase.execute(any(), any()));
+      });
     });
 
     group('resetGame', () {
